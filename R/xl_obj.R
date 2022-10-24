@@ -6,6 +6,7 @@ XlObj <- R6::R6Class("XlObj", list(
   wb = NA,
   current_ws = NA,
   current_row = NA,
+  empty = NA,
 
   reset = function() {
     self$fn <- ""
@@ -13,6 +14,7 @@ XlObj <- R6::R6Class("XlObj", list(
     openxlsx::addWorksheet(self$wb, "Sheet 1")
     self$current_ws = 1
     self$current_row = 1
+    self$empty <- TRUE
     invisible(self)
   },
 
@@ -26,12 +28,17 @@ XlObj <- R6::R6Class("XlObj", list(
     self$wb
   },
 
+  is_empty = function() {
+    self$empty
+  },
+
   insert_text = function(text) {
     stopifnot(is.character(text))
     text <- split_string_by_line(text)
     openxlsx::writeData(self$wb, self$current_ws, text,
                         startRow = self$current_row)
     self$increment_current_row(length(text) + 1)
+    self$empty <- FALSE
     invisible(self)
   },
 
@@ -45,7 +52,8 @@ XlObj <- R6::R6Class("XlObj", list(
   },
 
   write = function() {
-    openxlsx::write.xlsx(self$content, file = self$fn)
+    flag <- openxlsx::saveWorkbook(self$wb, self$fn, overwrite = TRUE,
+                                   returnValue = TRUE)
     invisible(self)
   }
 ))

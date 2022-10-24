@@ -34,7 +34,9 @@ text_hook <- function(x) {
   invisible(x)
 }
 
-document_hook <- function(x) x
+document_hook <- function(x) {
+  invisible(x)
+}
 
 
 chunk_hook <- function(x, options) x

@@ -60,6 +60,12 @@ knitxl <- function(input,
                              envir = envir,
                              encoding = encoding)
 
+  if (xl_obj$is_empty()) {
+    if (is.null(text))
+      text <- readr::read_file(input)
+    xl_obj$insert_text(text)
+  }
+
   if (to_file) {
     if (is.null(output))
       output <- out_fn_from_in_fn(input)
@@ -79,7 +85,7 @@ out_fn_from_in_fn <- function(in_fn) {
 set_xl_hooks <- function() {
 
   set_xl_hooks_with_options()
-  set_xl_hooks_without_options()
+  set_xl_hooks_without_option()
 }
 
 set_xl_hooks_with_options <- function() {
@@ -103,7 +109,7 @@ set_xl_hooks_with_options <- function() {
   purrr::iwalk(hook_list, set_hook)
 }
 
-set_xl_hooks_without_options <- function() {
+set_xl_hooks_without_option <- function() {
   hook_list <- c(text = text_hook,
                  document = document_hook,
                  inline = inline_hook)
