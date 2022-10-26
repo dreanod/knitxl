@@ -1,0 +1,6 @@
+require(magrittr)
+require(usethis)
+require(devtools)
+require(knitr)
+require(openxlsx)
+require(testthat)
