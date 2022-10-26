@@ -1,10 +1,14 @@
+
+```{r setup}
 library(openxlsx)
 library(stringr)
 
 wb <- createWorkbook()
 
 addWorksheet(wb, "Sheet 1")
+```
 
+```{r}
 text <- c("* fruits
   + apples
     - macintosh
@@ -22,6 +26,20 @@ writeData(wb, 1, text)
 style <- createStyle(fontColour = "red", textDecoration = "bold")
 addStyle(wb, 1, style, 1, 1)
 
+openXL(wb)
+```
+
+
+```{r}
 writeData(wb, 1, 1:4, 7, 1)
 
 openXL(wb)
+```
+
+
+```{r}
+writeData(wb, 1, mtcars, 1, 1, rowNames = TRUE)
+openXL(wb)
+```
+
+

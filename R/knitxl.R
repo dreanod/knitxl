@@ -19,8 +19,6 @@
 #'   \code{NULL}, the compiled output is returned as a character vector. In
 #'   other words, if you provide a file input, you get an output filename; if
 #'   you provide a character vector input, you get a character vector output.
-#'
-#' @return
 #' @export
 #'
 #' @examples library(knitxl)
@@ -61,6 +59,7 @@ knitxl <- function(input,
                              encoding = encoding)
 
   if (xl_obj$is_empty()) {
+    message("No code to execute: knitxl is just transcribing text to output file.")
     if (is.null(text))
       text <- readr::read_file(input)
     xl_obj$insert_text(text)
@@ -91,6 +90,7 @@ set_xl_hooks <- function() {
 set_xl_hooks_with_options <- function() {
   hook_list <- c(source = source_hook,
                  output = output_hook,
+                 message = message_hook,
                  warning = warning_hook,
                  error = error_hook,
                  plot = plot_hook,

@@ -5,14 +5,28 @@ source_hook <- function(x, options) {
 }
 
 output_hook <- function(x, options) {
-  x
+  # style <- openxlsx::createStyle(fontColour = "blue", textDecoration = "italic")
+  # xl_obj$insert_text(x, style)
+  invisible(x)
+}
+
+error_hook <- function(x, options) {
+  style <- openxlsx::createStyle(fontColour = "red", textDecoration = "bold")
+  xl_obj$insert_text(x, style)
+  invisible(x)
 }
 
 warning_hook <- function(x, options) {
-  x
+  style <- openxlsx::createStyle(fontColour = "orange", textDecoration = "bold")
+  xl_obj$insert_text(x, style)
+  invisible(x)
 }
 
-error_hook <- function(x, options) x
+message_hook <- function(x, options) {
+  style <- openxlsx::createStyle(fontColour = "blue", textDecoration = "italic")
+  xl_obj$insert_text(x, style)
+  invisible(x)
+}
 
 
 
