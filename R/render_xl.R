@@ -1,7 +1,6 @@
 
 render_xl <- function(x, ...) {
   res <- xl_renderer(x)
-  xl_obj$insert_data_frame(res[["table"]], res[["style"]])
   knitr::knit_print(x, ...)
 }
 
@@ -12,15 +11,42 @@ xl_renderer <- function(x) {
 
 #' @export
 xl_renderer.default <- function(x) {
-  tab <- as.data.frame(x)
-  list(table = tab, style = NULL)
+  text <- paste0(capture.output(
+    print(x)
+  ), collapse = "\n")
+  insert_text(text, style = NULL)
 }
 
 #' @export
 xl_renderer.data.frame <- function(x) {
-  list(table = x, style = NULL)
+  insert_data_frame(x)
 }
 
-# xl_renderer.numeric <- function(x) {
-#
-# }
+#' @export
+xl_renderer.numeric <- function(x) {
+  xl_renderer_vector(x)
+}
+
+#' @export
+xl_renderer.logical <- function(x) {
+  xl_renderer_vector(x)
+}
+
+#' @export
+xl_renderer.list <- function(x) {
+  xl_renderer_vector(x)
+}
+
+#' @export
+xl_renderer.character <- function(x) {
+  if (length(x) == 1)
+    insert_text(x)
+  else
+    xl_renderer_vector(x)
+}
+
+#' @export
+xl_renderer_vector <- function(x) {
+  insert_vector(x)
+}
+
