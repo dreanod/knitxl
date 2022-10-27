@@ -87,24 +87,32 @@ XlObj <- R6::R6Class("XlObj", list(
     invisible(self)
   },
 
-  insert_data_frame = function(df, style = NULL, h_style = NULL,
-                               direction = "down") {
+  insert_data_frame = function(df, style = NULL, h_style = NULL, r_style = NULL,
+                               colNames = TRUE, rowNames = TRUE, max_rows = 50) {
+    stopifnot("`df` must be a data.frame" = is.data.frame(df))
 
-  }
+    if (nrow(df) > max_rows) {
+      original_nrow_df <- nrow(df)
+      df <- df[1:max_rows, ]
+      cropping_df <- TRUE
+    } else {
+      croppind_df <- FALSE
+    }
 
-  insert_text = function(text, style = NULL) {
-    stopifnot(is.character(text))
-  },
+    openxlsx::writeData(self$wb, self$current_ws, df, startRow = self$current_row,
+                        rowNames = rowNames, colNames = colNames)
 
-  insert_data_frame = function(tab, sty) {
-    stopifnot(is.data.frame(tab))
-    openxlsx::writeData(self$wb, self$current_ws, tab,
-                        startRow = self$current_row,
-                        rowNames = TRUE)
-    self$increment_current_row(nrow(tab) + 1)
-    self$empty <- FALSE
+    n_rows_inserted <- nrow(df) + colNames
+    self$increment_current_row(n_rows_inserted + 1)
+
+    if (cropping_df) {
+      message(glue::glue("...",
+                         "Printing {max_rows} rows out of {original_nrow_df}.",
+                         .sep = "/n"))
+    }
+
     invisible(self)
-  },
+  }
 
   increment_current_row = function(n) {
     self$current_row <- self$current_row + n
