@@ -54,3 +54,13 @@ test_that("renders vectors", {
   expect_snapshot_xl("vector3", build_chunk("setNames(LETTERS[1:3], c('a', 'b', 'c'))"))
 })
 
+test_that("renders plots", {
+  dev_old <- opts_chunk$get("dev"); opts_chunk$set(dev = "png")
+  fig.path_old <- opts_chunk$get("fig.path"); opts_chunk$set(fig.path = tempdir())
+
+  expect_snapshot_xl("plot1", build_chunk("plot(1:3, 1:3)"))
+
+  opts_chunk$set(dev = dev_old)
+  opts_chunk$set(fig.path = fig.path_old)
+})
+
