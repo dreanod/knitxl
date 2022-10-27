@@ -40,8 +40,8 @@ test_that("knitxl parses text", {
 
 test_that("errors, warnings and messages rendered correctly", {
   expect_snapshot_xl("error", build_chunk("log('a')"))
-  # expect_snapshot_xl("warning", build_chunk("log(-1)"))
-  # expect_snapshot_xl("message", build_chunk("message('foo')"))
+  expect_snapshot_xl("warning", build_chunk("log(-1)"))
+  expect_snapshot_xl("message", build_chunk("message('foo')"))
 })
 
 test_that("renders data.frames", {
@@ -50,5 +50,7 @@ test_that("renders data.frames", {
 
 test_that("renders vectors", {
   expect_snapshot_xl("vector1", build_chunk("1:4"))
+  expect_snapshot_xl("vector2", build_chunk("setNames(1:3, c('a', 'b', 'c'))"))
+  expect_snapshot_xl("vector3", build_chunk("setNames(LETTERS[1:3], c('a', 'b', 'c'))"))
 })
 
