@@ -112,7 +112,7 @@ XlObj <- R6::R6Class("XlObj", list(
     }
 
     invisible(self)
-  }
+  },
 
   increment_current_row = function(n) {
     self$current_row <- self$current_row + n
@@ -132,3 +132,23 @@ XlObj <- R6::R6Class("XlObj", list(
 
 xl_obj <- XlObj$new()
 
+
+### public interface to write on xl_obj
+
+#' @export
+insert_text <- function(text, style = NULL) {
+  xl_obj$insert_text(text, style = style)
+}
+
+#' @export
+insert_vector <- function(x, style = NULL, h_style = NULL, direction = "vertical") {
+  xl_obj$insert_vector(x, style = style, h_style = h_style, direction = direction)
+}
+
+#' @export
+insert_data_frame <- function(df, style = NULL, h_style = NULL, r_style = NULL,
+                              colNames = TRUE, rowNames = TRUE, max_rows = 50) {
+  xl_obj$insert_data_frame(df, style = style, h_style = h_style,
+                           r_style = r_style, colNames = colNames,
+                           rowNames = rowNames, max_rows = max_rows)
+}
