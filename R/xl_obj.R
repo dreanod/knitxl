@@ -62,21 +62,21 @@ XlObj <- R6::R6Class("XlObj", list(
 
     if (direction == "vertical") {
       if (is.null(names(x))) {
-        writeData(self$wb, self$current_ws, x, startRow = self$currentRow)
+        openxlsx::writeData(self$wb, self$current_ws, x, startRow = self$current_row)
       } else {
         x <- as.data.frame(x)
-        writeData(self$wb, self$current_ws, x, startRow = self$currentRow,
+        openxlsx::writeData(self$wb, self$current_ws, x, startRow = self$current_row,
                   rowNames = TRUE, colNames = FALSE)
       }
       n_rows_inserted <- length(x)
     } else {
       x <- t(x)
       if (is.null(names(x))) {
-        writeData(self$wb, self$current_ws, x, startRow = self$currentRow,
+        openxlsx::writeData(self$wb, self$current_ws, x, startRow = self$current_row,
                   colNames = FALSE)
         n_rows_inserted <- 1
       } else {
-        writeData(self$wb, self$current_ws, x, startRow = self$currentRow,
+        openxlsx::writeData(self$wb, self$current_ws, x, startRow = self$current_row,
                   colNames = TRUE)
         n_rows_inserted <- 2
       }

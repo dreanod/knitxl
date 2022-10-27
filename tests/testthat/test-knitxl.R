@@ -48,7 +48,7 @@ test_that("renders data.frames", {
   expect_snapshot_xl("data.frame1", build_chunk("mtcars"))
 })
 
-# test_that("renders vectors", {
-#   # expect_snapshot_xl("vector1", build_chunk("1:4"))
-# })
+test_that("renders vectors", {
+  expect_snapshot_xl("vector1", build_chunk("1:4"))
+})
 
