@@ -2,13 +2,12 @@
 ```{r setup}
 library(openxlsx)
 library(stringr)
-
-wb <- createWorkbook()
-
-addWorksheet(wb, "Sheet 1")
 ```
 
 ```{r}
+wb <- createWorkbook()
+addWorksheet(wb, "Sheet 1")
+
 text <- c("* fruits
   + apples
     - macintosh
@@ -30,15 +29,67 @@ openXL(wb)
 ```
 
 
+# Vectors
+
+## Vertical without names
+
 ```{r}
-writeData(wb, 1, 1:4, 7, 1)
+wb <- createWorkbook()
+addWorksheet(wb, "Sheet 1")
+
+x <- 1:4
+writeData(wb, 1, x, 1, 1)
 
 openXL(wb)
 ```
 
+## Vertical with names
 
 ```{r}
+wb <- createWorkbook()
+addWorksheet(wb, "Sheet 1")
+
+x <- 1:4
+names(x) <- letters[1:4]
+x <- as.data.frame(x)
+writeData(wb, 1, x, 1, 1, rowNames = TRUE, colNames = FALSE)
+
+openXL(wb)
+```
+
+## Horizontal without names
+
+```{r}
+wb <- createWorkbook()
+addWorksheet(wb, "Sheet 1")
+
+x <- 1:4
+x <- t(x)
+writeData(wb, 1, x, 1, 1, colNames = FALSE)
+
+openXL(wb)
+```
+
+## Horizontal with names
+
+```{r}
+wb <- createWorkbook()
+addWorksheet(wb, "Sheet 1")
+
+x <- 1:4
+names(x) <- letters[1:4]
+x <- t(x)
+writeData(wb, 1, x, 1, 1)
+
+openXL(wb)
+```
+
+```{r}
+wb <- createWorkbook()
+addWorksheet(wb, "Sheet 1")
+
 writeData(wb, 1, mtcars, 1, 1, rowNames = TRUE)
+
 openXL(wb)
 ```
 
