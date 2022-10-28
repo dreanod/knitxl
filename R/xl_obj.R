@@ -114,8 +114,16 @@ XlObj <- R6::R6Class("XlObj", list(
     invisible(self)
   },
 
-  insert_image = function(fn) {
-    openxlsx::insertImage(self$wb, self$current_ws, fn, startRow = self$current_row)
+  insert_image = function(fn, width, height, units, dpi) {
+    openxlsx::insertImage(wb = self$wb,
+                          sheet = self$current_ws,
+                          file = fn,
+                          width = width,
+                          height = height,
+                          startRow = self$current_row,
+                          startCol = 1,
+                          units = units,
+                          dpi = dpi)
   },
 
   increment_current_row = function(n) {

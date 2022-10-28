@@ -25,7 +25,8 @@ message_hook <- function(x, options) {
 }
 
 plot_hook <- function(x, options) {
-  xl_obj$insert_image(x)
+  xl_obj$insert_image(x, width = options$fig.width, height = options$fig.height,
+                      units = "in", dpi = options$dpi)
   invisible(x)
 }
 
