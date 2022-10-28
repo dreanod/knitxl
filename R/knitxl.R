@@ -128,5 +128,6 @@ set_xl_hooks_without_option <- function() {
 }
 
 set_opt_chunk <- function() {
-  knitr::opts_chunk$set(render = render_xl)
+  knitr::opts_chunk$set(render = render_xl,
+                        fig.show = "asis")
 }

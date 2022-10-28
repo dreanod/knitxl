@@ -50,6 +50,7 @@ XlObj <- R6::R6Class("XlObj", list(
     }
 
     self$increment_current_row(n_text_rows + 1)
+
     self$empty <- FALSE
     invisible(self)
   },
@@ -63,12 +64,13 @@ XlObj <- R6::R6Class("XlObj", list(
     if (direction == "vertical") {
       if (is.null(names(x))) {
         openxlsx::writeData(self$wb, self$current_ws, x, startRow = self$current_row)
+        n_rows_inserted <- length(x)
       } else {
         x <- as.data.frame(x)
         openxlsx::writeData(self$wb, self$current_ws, x, startRow = self$current_row,
                   rowNames = TRUE, colNames = FALSE)
+        n_rows_inserted <- nrow(x)
       }
-      n_rows_inserted <- length(x)
     } else {
       x <- t(x)
       if (is.null(names(x))) {
@@ -83,6 +85,7 @@ XlObj <- R6::R6Class("XlObj", list(
     }
 
     self$increment_current_row(n_rows_inserted + 1)
+
     self$empty <- FALSE
     invisible(self)
   },
@@ -111,6 +114,7 @@ XlObj <- R6::R6Class("XlObj", list(
                          .sep = "/n"))
     }
 
+    self$empty <- FALSE
     invisible(self)
   },
 
@@ -124,10 +128,16 @@ XlObj <- R6::R6Class("XlObj", list(
                           startCol = 1,
                           units = units,
                           dpi = dpi)
+    n_rows_inserted <- ceiling(height * 71.4 / 15)
+    self$increment_current_row(n_rows_inserted + 1)
+
+    self$empty <- FALSE
+    invisible(self)
   },
 
   increment_current_row = function(n) {
     self$current_row <- self$current_row + n
+    invisible(self)
   },
 
   view = function() {
@@ -163,4 +173,9 @@ insert_data_frame <- function(df, style = NULL, h_style = NULL, r_style = NULL,
   xl_obj$insert_data_frame(df, style = style, h_style = h_style,
                            r_style = r_style, colNames = colNames,
                            rowNames = rowNames, max_rows = max_rows)
+}
+
+insert_image <- function(fn, width, height, units, dpi) {
+  xl_obj$insert_image(fn, width = width, height = height,
+                      units = units, dpi = dpi)
 }

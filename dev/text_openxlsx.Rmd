@@ -1,12 +1,15 @@
 
-```{r setup}
-library(openxlsx)
-library(stringr)
-```
 
 ```{r}
-wb <- createWorkbook()
-addWorksheet(wb, "Sheet 1")
+library(openxlsx)
+library(stringr)
+library(knitr)
+```
+
+
+```{r, wb=TRUE}
+# wb <- createWorkbook()
+# addWorksheet(wb, "Sheet 1")
 
 text <- c("* fruits
   + apples
@@ -25,7 +28,7 @@ writeData(wb, 1, text)
 style <- createStyle(fontColour = "red", textDecoration = "bold")
 addStyle(wb, 1, style, 1, 1)
 
-openXL(wb)
+# openXL(wb)
 ```
 
 
@@ -93,4 +96,21 @@ writeData(wb, 1, mtcars, 1, 1, rowNames = TRUE)
 openXL(wb)
 ```
 
+
+## Heights
+
+```{r}
+wb <- createWorkbook()
+addWorksheet(wb, "Sheet 1")
+
+setRowHeights(wb, 1, 2, 15)
+
+openXL(wb)
+```
+
+## Figures
+
+```{r}
+png()
+```
 
