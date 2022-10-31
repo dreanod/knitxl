@@ -36,23 +36,25 @@ XlObj <- R6::R6Class("XlObj", list(
     stopifnot("`text` must be a character" = is.character(text),
               "`text` must be of length 1" = length(text) == 1)
 
-    text <- split_string_by_line(text)
-    n_text_rows <- length(text)
+    if (text != "") {
+      text <- split_string_by_line(text)
+      n_text_rows <- length(text)
 
-    openxlsx::writeData(self$wb, self$current_ws, text,
-                        startRow = self$current_row)
+      openxlsx::writeData(self$wb, self$current_ws, text,
+                          startRow = self$current_row)
 
-    if (!is.null(style)) {
-      stopifnot("`style` must be of class `Style`" = inherits(style, "Style"))
-      style_rows <- self$current_row:(self$current_row + n_text_rows - 1)
-      openxlsx::addStyle(self$wb, self$current_ws, style,
-                         rows = self$current_row, cols = 1, stack = TRUE)
+      if (!is.null(style)) {
+        stopifnot("`style` must be of class `Style`" = inherits(style, "Style"))
+        style_rows <- self$current_row:(self$current_row + n_text_rows - 1)
+        openxlsx::addStyle(self$wb, self$current_ws, style,
+                           rows = self$current_row, cols = 1, stack = TRUE)
+      }
+
+      self$increment_current_row(n_text_rows + 1)
+
+      self$empty <- FALSE
+      invisible(self)
     }
-
-    self$increment_current_row(n_text_rows + 1)
-
-    self$empty <- FALSE
-    invisible(self)
   },
 
   insert_vector = function(x, style = NULL, h_style = NULL,
@@ -99,7 +101,7 @@ XlObj <- R6::R6Class("XlObj", list(
       df <- df[1:max_rows, ]
       cropping_df <- TRUE
     } else {
-      croppind_df <- FALSE
+      cropping_df <- FALSE
     }
 
     openxlsx::writeData(self$wb, self$current_ws, df, startRow = self$current_row,

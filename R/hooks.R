@@ -1,5 +1,5 @@
 source_hook <- function(x, options) {
-  style <- openxlsx::createStyle(fontName = "Courier New", bgFill = "grey80")
+  style <- openxlsx::createStyle(fontName = "Courier New")
   insert_text(x, style)
   invisible(x)
 }
@@ -37,7 +37,7 @@ inline_hook <- function(x) {
 }
 
 text_hook <- function(x) {
-  insert_text(x)
+  insert_text(stringr::str_trim(x))
   invisible(x)
 }
 

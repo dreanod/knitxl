@@ -1,44 +1,55 @@
 
-render_xl <- function(x, ...) {
-  res <- xl_renderer(x)
-  knitr::knit_print(x, ...)
+render_xl <- function(x, options, ...) {
+  xl_renderer(x)
 }
 
 #' @export
-xl_renderer <- function(x) {
+xl_renderer <- function(x, options) {
   UseMethod("xl_renderer")
 }
 
 #' @export
-xl_renderer.default <- function(x) {
-  text <- paste0(capture.output(
+xl_renderer.default <- function(x, options) {
+  print_output <- paste0(capture.output(
     print(x)
   ), collapse = "\n")
-  insert_text(text, style = NULL)
+  new_knitxl_output_text(print_output, style = NULL)
+}
+
+new_knitxl_output_text <- function(text, style) {
+  attr(x, "style") <- style
+  class(x) <- c("knitxl_output_text", class(x))
+  x
 }
 
 #' @export
-xl_renderer.data.frame <- function(x) {
-  insert_data_frame(x)
+xl_renderer.data.frame <- function(x, options) {
+  new_knitxl_output_data_frame(x, style = NULL)
+}
+
+new_knitxl_output_data_frame <- function(df, style) {
+  attr(df, "style") <- style
+  class(df) <- c("knitxl_output_data_frame", class(df))
+  df
 }
 
 #' @export
-xl_renderer.numeric <- function(x) {
+xl_renderer.numeric <- function(x, options) {
   xl_renderer_vector(x)
 }
 
 #' @export
-xl_renderer.logical <- function(x) {
+xl_renderer.logical <- function(x, options) {
   xl_renderer_vector(x)
 }
 
 #' @export
-xl_renderer.list <- function(x) {
+xl_renderer.list <- function(x, options) {
   xl_renderer_vector(x)
 }
 
 #' @export
-xl_renderer.character <- function(x) {
+xl_renderer.character <- function(x, options) {
   if (length(x) == 1)
     insert_text(x)
   else
@@ -46,7 +57,13 @@ xl_renderer.character <- function(x) {
 }
 
 #' @export
-xl_renderer_vector <- function(x) {
-  insert_vector(x)
+xl_renderer_vector <- function(x, options) {
+  new_knitxl_output_vector(x, style = NULL)
+}
+
+new_knitxl_output_vector <- function(x, style) {
+  attr(x, "style") <- style
+  class(x) <- c("knitxl_output_vector", class(x))
+  x
 }
 
