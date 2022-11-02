@@ -62,7 +62,8 @@ knitxl <- function(input,
     message("No code to execute: knitxl is just transcribing text to output file.")
     if (is.null(text))
       text <- readr::read_file(input)
-    xl_obj$insert_text(text)
+    style <- kxl_style_get(knitr::opts_chunk$get())
+    insert_text(text, style, type = "text")
   }
 
   if (to_file) {
@@ -130,4 +131,5 @@ set_xl_hooks_without_option <- function() {
 set_opt_chunk <- function() {
   knitr::opts_chunk$set(render = render_xl,
                         fig.show = "asis")
+  kxl_set_default_theme()
 }

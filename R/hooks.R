@@ -1,6 +1,6 @@
 source_hook <- function(x, options) {
-  style <- openxlsx::createStyle(fontName = "Courier New")
-  insert_text(x, style)
+  style <- kxl_style_get(options)
+  insert_text(x, style, type = "text.source")
   invisible(x)
 }
 
@@ -9,20 +9,20 @@ output_hook <- function(x, options) {
 }
 
 error_hook <- function(x, options) {
-  style <- openxlsx::createStyle(fontColour = "red", textDecoration = "bold")
-  insert_text(x, style)
+  style <- kxl_style_get(options)
+  insert_text(x, style, type = "text.error")
   invisible(x)
 }
 
 warning_hook <- function(x, options) {
-  style <- openxlsx::createStyle(fontColour = "orange", textDecoration = "bold")
-  insert_text(x, style)
+  style <- kxl_style_get(options)
+  insert_text(x, style, type = "text.warning")
   invisible(x)
 }
 
 message_hook <- function(x, options) {
-  style <- openxlsx::createStyle(fontColour = "blue", textDecoration = "italic")
-  insert_text(x, style)
+  style <- kxl_style_get(options)
+  insert_text(x, style, type = "text.message")
   invisible(x)
 }
 
@@ -37,7 +37,8 @@ inline_hook <- function(x) {
 }
 
 text_hook <- function(x) {
-  insert_text(stringr::str_trim(x))
+  style <- kxl_style_get(knitr::opts_chunk$get())
+  insert_text(stringr::str_trim(x), style = style, type = "text")
   invisible(x)
 }
 

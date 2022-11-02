@@ -32,29 +32,32 @@ XlObj <- R6::R6Class("XlObj", list(
     self$empty
   },
 
-  insert_text = function(text, style = NULL) {
+  insert_text = function(text, style, type) {
     stopifnot("`text` must be a character" = is.character(text),
               "`text` must be of length 1" = length(text) == 1)
 
     if (text != "") {
       text <- split_string_by_line(text)
       n_text_rows <- length(text)
+      new_rows <- self$current_row:(self$current_row + n_text_rows - 1)
 
       openxlsx::writeData(self$wb, self$current_ws, text,
                           startRow = self$current_row)
 
-      if (!is.null(style)) {
-        stopifnot("`style` must be of class `Style`" = inherits(style, "Style"))
-        style_rows <- self$current_row:(self$current_row + n_text_rows - 1)
-        openxlsx::addStyle(self$wb, self$current_ws, style,
-                           rows = self$current_row, cols = 1, stack = TRUE)
-      }
+      self$style_text(rows = new_rows, style, type)
 
       self$increment_current_row(n_text_rows + 1)
 
       self$empty <- FALSE
       invisible(self)
     }
+  },
+
+  style_text = function(rows, style, type) {
+    args <- get_oxl_style_args(style, type)
+    oxl_style <- do.call(openxlsx::createStyle, args)
+    openxlsx::addStyle(self$wb, self$current_ws, oxl_style, rows = rows,
+                       cols = 1, stack = FALSE)
   },
 
   insert_vector = function(x, style = NULL, h_style = NULL,
@@ -160,8 +163,8 @@ xl_obj <- XlObj$new()
 ### public interface to write on xl_obj
 
 #' @export
-insert_text <- function(text, style = NULL) {
-  xl_obj$insert_text(text, style = style)
+insert_text <- function(text, style, type) {
+  xl_obj$insert_text(text, style = style, type = type)
 }
 
 #' @export
@@ -180,4 +183,28 @@ insert_data_frame <- function(df, style = NULL, h_style = NULL, r_style = NULL,
 insert_image <- function(fn, width, height, units, dpi) {
   xl_obj$insert_image(fn, width = width, height = height,
                       units = units, dpi = dpi)
+}
+
+
+### Styles
+
+get_oxl_style_args <- function(style, type) {
+  arg_names <- c("fontName",
+                 "fontSize",
+                 "fontColour",
+                 "numFmt",
+                 "border",
+                 "borderColour",
+                 "borderStyle",
+                 "bgFill",
+                 "fgFill",
+                 "halign",
+                 "valign",
+                 "textDecoration",
+                 "wrapText",
+                 "textRotation",
+                 "indent")
+  style_opt_names <- paste("xl", type, arg_names, sep = ".")
+  args <- setNames(kxl_style_get_value(style, style_opt_names), arg_names)
+  purrr::discard(args, is.null)
 }

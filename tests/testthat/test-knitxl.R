@@ -1,9 +1,9 @@
 
 test_that("knitxl parses text", {
-  expect_snapshot_xl("file1", "Some text")
-  expect_snapshot_xl("file2", "Some text `r 1+1`")
-  expect_snapshot_xl("file3", "Some text `r 1+1` more text")
-  expect_snapshot_xl("file4", "* Item 1\n* Item 2\n* Item 3")
+  expect_snapshot_xl("text1", "Some text")
+  expect_snapshot_xl("text2", "Some text `r 1+1`")
+  expect_snapshot_xl("text3", "Some text `r 1+1` more text")
+  expect_snapshot_xl("text4", "* Item 1\n* Item 2\n* Item 3")
 })
 
 test_that("errors, warnings and messages rendered correctly", {

@@ -1,15 +1,18 @@
 
 #' @export
-sew.knitxl_output_text <- function(x, ...) {
-  insert_text(unclass(x), style = attr(x, "style"))
+sew.knitxl_output_text <- function(x, options, ...) {
+  style <- kxl_style_get(options)
+  insert_text(unclass(x), style = style)
 }
 
 #' @export
-sew.knitxl_output_vector <- function(x, ...) {
-  insert_vector(unclass(x), style = attr(x, "style"))
+sew.knitxl_output_vector <- function(x, options, ...) {
+  style <- kxl_style_get(options)
+  insert_vector(unclass(x), style = style)
 }
 
 #' @export
-sew.knitxl_output_data_frame <- function(x, ...) {
-  insert_data_frame(x, style = attr(x, "style"))
+sew.knitxl_output_data_frame <- function(x, options, ...) {
+  style <- kxl_style_get(options)
+  insert_data_frame(x, style = style)
 }
