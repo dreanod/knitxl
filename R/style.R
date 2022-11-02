@@ -101,6 +101,41 @@ kxl_style <- function(xl.fontName = NULL,
                       xl.text.source.textRotation = NULL,
                       xl.text.source.indent = NULL,
                       xl.text.source.rowHeight = NULL,
+
+                      xl.vector.fontName = NULL,
+                      xl.vector.fontSize = NULL,
+                      xl.vector.fontColour = NULL,
+                      xl.vector.numFmt = NULL,
+                      xl.vector.border = NULL,
+                      xl.vector.borderColour = NULL,
+                      xl.vector.borderStyle = NULL,
+                      xl.vector.bgFill = NULL,
+                      xl.vector.fgFill = NULL,
+                      xl.vector.halign = NULL,
+                      xl.vector.valign = NULL,
+                      xl.vector.textDecoration = NULL,
+                      xl.vector.wrapText = NULL,
+                      xl.vector.textRotation = NULL,
+                      xl.vector.indent = NULL,
+                      xl.vector.rowHeight = NULL,
+                      xl.vector.direction = NULL,
+
+                      xl.vector.names.fontName = NULL,
+                      xl.vector.names.fontSize = NULL,
+                      xl.vector.names.fontColour = NULL,
+                      xl.vector.names.numFmt = NULL,
+                      xl.vector.names.border = NULL,
+                      xl.vector.names.borderColour = NULL,
+                      xl.vector.names.borderStyle = NULL,
+                      xl.vector.names.bgFill = NULL,
+                      xl.vector.names.fgFill = NULL,
+                      xl.vector.names.halign = NULL,
+                      xl.vector.names.valign = NULL,
+                      xl.vector.names.textDecoration = NULL,
+                      xl.vector.names.wrapText = NULL,
+                      xl.vector.names.textRotation = NULL,
+                      xl.vector.names.indent = NULL,
+                      xl.vector.names.rowHeight = NULL,
                       ...) {
   style <- find_args(...)
   class(style) <- "knitxl_style"
@@ -117,7 +152,13 @@ kxl_style_default <- function() {
             xl.text.warning.textDecoration = "bold",
             xl.text.message.fontColour = "blue",
             xl.text.message.textDecoration = "italic",
-            xl.text.source.fontName = "Courier New")
+            xl.text.source.fontName = "Courier New",
+            xl.vector.numFmt = "COMMA",
+            xl.vector.direction = "vertical",
+            xl.vector.names.textDecoration = "bold",
+            xl.vector.names.border = "right",
+            xl.vector.names.borderStyle = "thin",
+            xl.vector.names.borderColour = "black")
 }
 
 kxl_set_default_theme <- function() {
@@ -128,7 +169,7 @@ kxl_style_get <- function(options) {
   purrr::keep(options, stringr::str_starts(names(options), "xl."))
 }
 
-kxl_style_get_value <- function(style, values) {
+kxl_style_get_value <- function(style, keys) {
   get_value <- function(v) {
     if (is.null(style[[v]])) {
       split_value <- strsplit(v, ".", fixed = TRUE)[[1]]
@@ -142,7 +183,11 @@ kxl_style_get_value <- function(style, values) {
     style[[v]]
   }
 
-  setNames(purrr::map(values, get_value), values)
+  values <- purrr::map(keys, get_value)
+  if (length(values) == 1) {
+    return(values)
+  }
+  setNames(values, keys)
 }
 
 

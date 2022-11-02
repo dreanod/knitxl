@@ -58,40 +58,78 @@ XlObj <- R6::R6Class("XlObj", list(
     oxl_style <- do.call(openxlsx::createStyle, args)
     openxlsx::addStyle(self$wb, self$current_ws, oxl_style, rows = rows,
                        cols = 1, stack = FALSE)
+    invisible(self)
   },
 
-  insert_vector = function(x, style = NULL, h_style = NULL,
-                           direction = "vertical") {
+  insert_vector = function(x, style) {
     stopifnot("`x` must be a list or an atomic vector" = is.atomic(x) | is.list(x),
-              "`x` must be non-NULL" = !is.null(x),
-              "`direction` should be 'vertical' or 'horizontal'" = direction %in% c('vertical', 'horizontal'))
+              "`x` must be non-NULL" = !is.null(x))
+
+    direction <- kxl_style_get_value(style, "xl.vector.direction")
+    stopifnot("`direction` should be 'vertical' or 'horizontal'" = direction %in% c('vertical', 'horizontal'))
 
     if (direction == "vertical") {
       if (is.null(names(x))) {
         openxlsx::writeData(self$wb, self$current_ws, x, startRow = self$current_row)
         n_rows_inserted <- length(x)
+        vec_cols <- 1
+        name_cols <- NULL
       } else {
         x <- as.data.frame(x)
         openxlsx::writeData(self$wb, self$current_ws, x, startRow = self$current_row,
                   rowNames = TRUE, colNames = FALSE)
         n_rows_inserted <- nrow(x)
+        vec_cols <- 2
+        name_cols <- 1
       }
+      vec_rows <- self$current_row:(self$current_row + n_rows_inserted - 1)
+      name_rows <- vec_rows
     } else {
       x <- t(x)
       if (is.null(names(x))) {
         openxlsx::writeData(self$wb, self$current_ws, x, startRow = self$current_row,
                   colNames = FALSE)
         n_rows_inserted <- 1
+        vec_rows <- self$current_row
+        name_rows <- NULL
       } else {
         openxlsx::writeData(self$wb, self$current_ws, x, startRow = self$current_row,
                   colNames = TRUE)
         n_rows_inserted <- 2
+        vec_rows <- self$current_row + 1
+        name_rows <- self$current_row
       }
+      vec_cols <- seq_along(x)
+      name_cols <- vec_cols
     }
 
+    self$style_vector(vec_rows, vec_cols, name_rows, name_cols, style)
     self$increment_current_row(n_rows_inserted + 1)
 
     self$empty <- FALSE
+    invisible(self)
+  },
+
+  style_vector = function(vec_rows, vec_cols, name_rows, name_cols, style) {
+    self$style_vector_data(vec_rows, vec_cols, style)
+    if (!is.null(name_rows) & !is.null(name_cols))
+      self$style_vector_names(name_rows, name_cols, style)
+    invisible(self)
+  },
+
+  style_vector_data = function(vec_rows, vec_cols, style) {
+    args <- get_oxl_style_args(style, "vector")
+    oxl_style <- do.call(openxlsx::createStyle, args)
+    openxlsx::addStyle(self$wb, self$current_ws, oxl_style, rows = vec_rows,
+                       cols = vec_cols, stack = FALSE)
+    invisible(self)
+  },
+
+  style_vector_names = function(name_rows, name_cols, style) {
+    args <- get_oxl_style_args(style, "vector.names")
+    oxl_style <- do.call(openxlsx::createStyle, args)
+    openxlsx::addStyle(self$wb, self$current_ws, oxl_style, rows = name_rows,
+                       cols = name_cols, stack = FALSE)
     invisible(self)
   },
 
@@ -168,8 +206,8 @@ insert_text <- function(text, style, type) {
 }
 
 #' @export
-insert_vector <- function(x, style = NULL, h_style = NULL, direction = "vertical") {
-  xl_obj$insert_vector(x, style = style, h_style = h_style, direction = direction)
+insert_vector <- function(x, style) {
+  xl_obj$insert_vector(x, style = style)
 }
 
 #' @export

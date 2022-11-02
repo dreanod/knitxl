@@ -17,7 +17,7 @@ test_that("renders data.frames", {
 })
 
 test_that("renders vectors", {
-  expect_snapshot_xl("vector1", build_chunk("1:4"))
+  expect_snapshot_xl("vector1", build_chunk("1:4*10000"))
   expect_snapshot_xl("vector2", build_chunk("setNames(1:3, c('a', 'b', 'c'))"))
   expect_snapshot_xl("vector3", build_chunk("setNames(LETTERS[1:3], c('a', 'b', 'c'))"))
   expect_snapshot_xl("vector4", build_chunk("1:3; 4:6"))
