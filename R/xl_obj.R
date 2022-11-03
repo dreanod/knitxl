@@ -11,7 +11,8 @@ XlObj <- R6::R6Class("XlObj", list(
   reset = function() {
     self$fn <- ""
     self$wb <- openxlsx::createWorkbook()
-    openxlsx::addWorksheet(self$wb, "Sheet 1")
+    gridlines <- kxl_style_get_value(knitr::opts_chunk$get(), "xl.gridlines")
+    openxlsx::addWorksheet(self$wb, "Sheet 1", gridLines = gridlines)
     self$current_ws = 1
     self$current_row = 1
     self$empty <- TRUE

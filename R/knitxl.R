@@ -40,9 +40,6 @@ knitxl <- function(input,
     stopifnot(tools::file_ext(input) == "Rmd",
               file.exists(input))
 
-  xl_obj$reset()
-  on.exit(xl_obj$reset(), add = TRUE)
-
   old_hooks <- knitr::knit_hooks$get()
   on.exit(knitr::knit_hooks$restore(old_hooks), add = TRUE)
   set_xl_hooks()
@@ -50,6 +47,9 @@ knitxl <- function(input,
   old_opt_chunk <- knitr::opts_chunk$get()
   on.exit(knitr::opts_chunk$restore(old_opt_chunk), add = TRUE)
   set_opt_chunk()
+
+  xl_obj$reset()
+  on.exit(xl_obj$reset(), add = TRUE)
 
   knit_output <- knitr::knit(input = input,
                              output = NULL,

@@ -1,6 +1,8 @@
 
 
-kxl_style <- function(xl.fontName = NULL,
+kxl_style <- function(xl.gridlines = NULL,
+
+                      xl.fontName = NULL,
                       xl.fontSize = NULL,
                       xl.fontColour = NULL,
                       xl.numFmt = NULL,
@@ -196,7 +198,8 @@ kxl_style <- function(xl.fontName = NULL,
 }
 
 kxl_style_default <- function() {
-  kxl_style(xl.fontName = "Calibri",
+  kxl_style(xl.gridlines = FALSE,
+            xl.fontName = "Calibri",
             xl.fontSize = 11,
             xl.rowHeight = 12.75,
             xl.text.error.fontColour = "red",
