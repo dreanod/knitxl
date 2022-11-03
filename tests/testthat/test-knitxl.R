@@ -13,7 +13,7 @@ test_that("errors, warnings and messages rendered correctly", {
 })
 
 test_that("renders data.frames", {
-  expect_snapshot_xl("data.frame1", build_chunk("mtcars"))
+  expect_snapshot_xl("data_frame1", build_chunk("mtcars"))
 })
 
 test_that("renders vectors", {

@@ -135,7 +135,60 @@ kxl_style <- function(xl.fontName = NULL,
                       xl.vector.names.wrapText = NULL,
                       xl.vector.names.textRotation = NULL,
                       xl.vector.names.indent = NULL,
-                      xl.vector.names.rowHeight = NULL,
+
+                      xl.table.fontName = NULL,
+                      xl.table.fontSize = NULL,
+                      xl.table.fontColour = NULL,
+                      xl.table.numFmt = NULL,
+                      xl.table.border = NULL,
+                      xl.table.borderColour = NULL,
+                      xl.table.borderStyle = NULL,
+                      xl.table.bgFill = NULL,
+                      xl.table.fgFill = NULL,
+                      xl.table.halign = NULL,
+                      xl.table.valign = NULL,
+                      xl.table.textDecoration = NULL,
+                      xl.table.wrapText = NULL,
+                      xl.table.textRotation = NULL,
+                      xl.table.indent = NULL,
+                      xl.table.rowHeight = NULL,
+
+                      xl.table.direction = NULL,
+                      xl.table.maxrows = NULL,
+                      xl.table.colNames = NULL,
+                      xl.table.rowNames = NULL,
+
+                      xl.table.header.fontName = NULL,
+                      xl.table.header.fontSize = NULL,
+                      xl.table.header.fontColour = NULL,
+                      xl.table.header.numFmt = NULL,
+                      xl.table.header.border = NULL,
+                      xl.table.header.borderColour = NULL,
+                      xl.table.header.borderStyle = NULL,
+                      xl.table.header.bgFill = NULL,
+                      xl.table.header.fgFill = NULL,
+                      xl.table.header.halign = NULL,
+                      xl.table.header.valign = NULL,
+                      xl.table.header.textDecoration = NULL,
+                      xl.table.header.wrapText = NULL,
+                      xl.table.header.textRotation = NULL,
+                      xl.table.header.indent = NULL,
+
+                      xl.table.rownames.fontName = NULL,
+                      xl.table.rownames.fontSize = NULL,
+                      xl.table.rownames.fontColour = NULL,
+                      xl.table.rownames.numFmt = NULL,
+                      xl.table.rownames.border = NULL,
+                      xl.table.rownames.borderColour = NULL,
+                      xl.table.rownames.borderStyle = NULL,
+                      xl.table.rownames.bgFill = NULL,
+                      xl.table.rownames.fgFill = NULL,
+                      xl.table.rownames.halign = NULL,
+                      xl.table.rownames.valign = NULL,
+                      xl.table.rownames.textDecoration = NULL,
+                      xl.table.rownames.wrapText = NULL,
+                      xl.table.rownames.textRotation = NULL,
+                      xl.table.rownames.indent = NULL,
                       ...) {
   style <- find_args(...)
   class(style) <- "knitxl_style"
@@ -158,7 +211,17 @@ kxl_style_default <- function() {
             xl.vector.names.textDecoration = "bold",
             xl.vector.names.border = "right",
             xl.vector.names.borderStyle = "thin",
-            xl.vector.names.borderColour = "black")
+            xl.vector.names.borderColour = "black",
+            xl.table.numFmt = "COMMA",
+            xl.table.direction = "vertical",
+            xl.table.maxrows = 50,
+            xl.table.colNames = TRUE,
+            xl.table.rowNames = TRUE,
+            xl.table.header.border = "bottom",
+            xl.table.header.textDecoration = "bold",
+            xl.table.header.halign = "center",
+            xl.table.rownames.fontColour = "grey",
+            xl.table.rownames.border = "right")
 }
 
 kxl_set_default_theme <- function() {
@@ -185,7 +248,7 @@ kxl_style_get_value <- function(style, keys) {
 
   values <- purrr::map(keys, get_value)
   if (length(values) == 1) {
-    return(values)
+    return(values[[1]])
   }
   setNames(values, keys)
 }

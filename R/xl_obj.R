@@ -111,31 +111,18 @@ XlObj <- R6::R6Class("XlObj", list(
   },
 
   style_vector = function(vec_rows, vec_cols, name_rows, name_cols, style) {
-    self$style_vector_data(vec_rows, vec_cols, style)
+    self$style_cells(style, "vector", vec_rows, vec_cols)
     if (!is.null(name_rows) & !is.null(name_cols))
-      self$style_vector_names(name_rows, name_cols, style)
+      self$style_cells(style, "vector.names", name_rows, name_cols)
     invisible(self)
   },
 
-  style_vector_data = function(vec_rows, vec_cols, style) {
-    args <- get_oxl_style_args(style, "vector")
-    oxl_style <- do.call(openxlsx::createStyle, args)
-    openxlsx::addStyle(self$wb, self$current_ws, oxl_style, rows = vec_rows,
-                       cols = vec_cols, stack = FALSE)
-    invisible(self)
-  },
-
-  style_vector_names = function(name_rows, name_cols, style) {
-    args <- get_oxl_style_args(style, "vector.names")
-    oxl_style <- do.call(openxlsx::createStyle, args)
-    openxlsx::addStyle(self$wb, self$current_ws, oxl_style, rows = name_rows,
-                       cols = name_cols, stack = FALSE)
-    invisible(self)
-  },
-
-  insert_data_frame = function(df, style = NULL, h_style = NULL, r_style = NULL,
-                               colNames = TRUE, rowNames = TRUE, max_rows = 50) {
+  insert_data_frame = function(df, style) {
     stopifnot("`df` must be a data.frame" = is.data.frame(df))
+
+    max_rows <- kxl_style_get_value(style, "xl.table.maxrows")
+    colNames <- kxl_style_get_value(style, "xl.table.colNames")
+    rowNames <- kxl_style_get_value(style, "xl.table.rowNames")
 
     if (nrow(df) > max_rows) {
       original_nrow_df <- nrow(df)
@@ -149,6 +136,18 @@ XlObj <- R6::R6Class("XlObj", list(
                         rowNames = rowNames, colNames = colNames)
 
     n_rows_inserted <- nrow(df) + colNames
+
+    data_rows <- if (colNames) (self$current_row + 1):(self$current_row + n_rows_inserted - 1) else self$current_row:(self$current_row + n_rows_inserted)
+    header_rows <- if (colNames) self$current_row else NULL
+    name_rows <- if (rowNames) data_rows else NULL
+
+    data_cols <- if (rowNames) 2:(ncol(df) + 1) else 1:ncol(df)
+    header_cols <- if(colNames) data_cols else NULL
+    name_cols <- if(rowNames) 1 else NULL
+
+    self$style_data_frame(style, data_rows, data_cols, header_rows, header_cols,
+                          name_rows, name_cols)
+
     self$increment_current_row(n_rows_inserted + 1)
 
     if (cropping_df) {
@@ -158,6 +157,28 @@ XlObj <- R6::R6Class("XlObj", list(
     }
 
     self$empty <- FALSE
+    invisible(self)
+  },
+
+  style_data_frame = function(style, data_rows, data_cols, header_rows, header_cols,
+                              name_rows, name_cols) {
+    ind <- expand.grid(rows = data_rows, cols = data_cols)
+    self$style_cells(style, "table", ind$rows, ind$cols)
+
+    if (!is.null(header_rows) & !is.null(header_cols))
+      self$style_cells(style, "table.header", header_rows, header_cols)
+
+    if (!is.null(name_rows) & !is.null(name_cols))
+      self$style_cells(style, "table.rownames", name_rows, name_cols)
+
+    invisible(self)
+  },
+
+  style_cells = function(style, key, rows, cols) {
+    args <- get_oxl_style_args(style, key)
+    oxl_style <- do.call(openxlsx::createStyle, args)
+    openxlsx::addStyle(self$wb, self$current_ws, oxl_style, rows = rows,
+                       cols = cols, stack = FALSE)
     invisible(self)
   },
 
@@ -211,11 +232,8 @@ insert_vector <- function(x, style) {
 }
 
 #' @export
-insert_data_frame <- function(df, style = NULL, h_style = NULL, r_style = NULL,
-                              colNames = TRUE, rowNames = TRUE, max_rows = 50) {
-  xl_obj$insert_data_frame(df, style = style, h_style = h_style,
-                           r_style = r_style, colNames = colNames,
-                           rowNames = rowNames, max_rows = max_rows)
+insert_data_frame <- function(df, style) {
+  xl_obj$insert_data_frame(df, style = style)
 }
 
 insert_image <- function(fn, width, height, units, dpi) {
