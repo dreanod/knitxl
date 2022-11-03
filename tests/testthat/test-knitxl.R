@@ -14,6 +14,7 @@ test_that("errors, warnings and messages rendered correctly", {
 
 test_that("renders data.frames", {
   expect_snapshot_xl("data_frame1", build_chunk("mtcars"))
+  expect_snapshot_xl("data_frame2", build_chunk("mtcars", "iris"))
 })
 
 test_that("renders vectors", {
