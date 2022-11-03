@@ -54,10 +54,7 @@ XlObj <- R6::R6Class("XlObj", list(
   },
 
   style_text = function(rows, style, type) {
-    args <- get_oxl_style_args(style, type)
-    oxl_style <- do.call(openxlsx::createStyle, args)
-    openxlsx::addStyle(self$wb, self$current_ws, oxl_style, rows = rows,
-                       cols = 1, stack = FALSE)
+    self$style_cells(style, type, rows, 1)
     invisible(self)
   },
 
