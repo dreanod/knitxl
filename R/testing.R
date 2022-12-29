@@ -45,3 +45,7 @@ build_chunk <- function(...) {
 
   paste0(chunks, collapse = "\n\n")
 }
+
+compare_xl_dev <- function() {
+  compare_file_xl("dev/Book1.xlsx", "dev/Book2.xlsx")
+}

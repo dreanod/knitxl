@@ -1,6 +1,5 @@
 source_hook <- function(x, options) {
-  style <- kxl_style_get(options)
-  insert_text(x, style, type = "text.source")
+  insert_text(x, type = "text.source")
   invisible(x)
 }
 
@@ -9,20 +8,17 @@ output_hook <- function(x, options) {
 }
 
 error_hook <- function(x, options) {
-  style <- kxl_style_get(options)
-  insert_text(x, style, type = "text.error")
+  insert_text(x, type = "text.error")
   invisible(x)
 }
 
 warning_hook <- function(x, options) {
-  style <- kxl_style_get(options)
-  insert_text(x, style, type = "text.warning")
+  insert_text(x, type = "text.warning")
   invisible(x)
 }
 
 message_hook <- function(x, options) {
-  style <- kxl_style_get(options)
-  insert_text(x, style, type = "text.message")
+  insert_text(x, type = "text.message")
   invisible(x)
 }
 
@@ -37,8 +33,7 @@ inline_hook <- function(x) {
 }
 
 text_hook <- function(x) {
-  style <- kxl_style_get(knitr::opts_chunk$get())
-  insert_text(stringr::str_trim(x), style = style, type = "text")
+  insert_text(stringr::str_trim(x), type = "text")
   invisible(x)
 }
 

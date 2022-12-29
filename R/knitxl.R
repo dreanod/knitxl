@@ -62,8 +62,7 @@ knitxl <- function(input,
     message("No code to execute: knitxl is just transcribing text to output file.")
     if (is.null(text))
       text <- readr::read_file(input)
-    style <- kxl_style_get(knitr::opts_chunk$get())
-    insert_text(text, style, type = "text")
+    insert_text(text, type = "text")
   }
 
   if (to_file) {

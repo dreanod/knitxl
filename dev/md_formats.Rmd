@@ -1,0 +1,54 @@
+Emphasis *italic* **bold**
+
+*italic* **bold**
+
+Headers
+
+# Header 1
+
+## Header 2
+
+### Header 3
+
+Lists
+
+Unordered List
+
+-   Item 1
+-   Item 2
+    -   Item 2a
+    -   Item 2b
+
+Ordered List
+
+1.  Item 1
+2.  Item 2
+3.  Item 3
+    -   Item 3a
+    -   Item 3b
+
+Use a plain http address or add a link to a phrase:
+
+<http://example.com>
+
+[linked phrase](http://example.com)
+
+Images
+
+Images on the web or local files in the same directory:
+
+![alt text](http://example.com/logo.png)
+
+![alt text](figures/img.png)
+
+Blockquotes
+
+A friend once said: \> It's always better to give \> than to receive.
+
+Plain Code Blocks Plain code blocks are displayed in a fixed-width font but not evaluated
+
+    This text is displayed verbatim / preformatted
+
+Inline Code
+
+We defined the `add` function to compute the sum of two numbers.

@@ -1,8 +1,7 @@
 
 #' @export
 sew.knitxl_output_text <- function(x, options, ...) {
-  style <- kxl_style_get(options)
-  insert_text(unclass(x), style = style)
+  insert_text(unclass(x))
 }
 
 #' @export

@@ -7,11 +7,13 @@ XlObj <- R6::R6Class("XlObj", list(
   current_ws = NA,
   current_row = NA,
   empty = NA,
+  cell_styles = NA,
 
   reset = function() {
     self$fn <- ""
     self$wb <- openxlsx::createWorkbook()
     gridlines <- kxl_style_get_value(knitr::opts_chunk$get(), "xl.gridlines")
+    self$cell_styles <- initialize_style()
     openxlsx::addWorksheet(self$wb, "Sheet 1", gridLines = gridlines)
     self$current_ws = 1
     self$current_row = 1
@@ -33,7 +35,12 @@ XlObj <- R6::R6Class("XlObj", list(
     self$empty
   },
 
-  insert_text = function(text, style, type) {
+  get_cell_style = function(cell_type) {
+    stopifnot("no style for requested cell type" = cell_type %in% names(self$cell_styles))
+    self$cell_styles[[cell_type]]
+  },
+
+  insert_text = function(text, type) {
     stopifnot("`text` must be a character" = is.character(text),
               "`text` must be of length 1" = length(text) == 1)
 
@@ -42,10 +49,9 @@ XlObj <- R6::R6Class("XlObj", list(
       n_text_rows <- length(text)
       new_rows <- self$current_row:(self$current_row + n_text_rows - 1)
 
-      openxlsx::writeData(self$wb, self$current_ws, text,
-                          startRow = self$current_row)
-
-      self$style_text(rows = new_rows, style, type)
+      purrr::walk(1:n_text_rows, ~ self$write_line(text = text[.x],
+                                                   row = new_rows[.x],
+                                                   type = type))
 
       self$increment_current_row(n_text_rows + 1)
 
@@ -54,9 +60,31 @@ XlObj <- R6::R6Class("XlObj", list(
     }
   },
 
-  style_text = function(rows, style, type) {
-    self$style_cells(style, type, rows, 1)
-    invisible(self)
+  write_line = function(text, row, type) {
+    if (type == "text")
+      self$parse_and_write_md_line(text, row)
+    else
+      self$write_line_in_cell(text, row, cell_type = type)
+  },
+
+  write_line_in_cell = function(text, row, cell_type) {
+    openxlsx::writeData(self$wb, self$current_ws, text, startRow = row)
+    self$style_cells(cell_type, row, 1)
+  },
+
+  parse_and_write_md_line = function(text, row) {
+    if (stringr::str_starts(text, "^#")) {
+      self$write_header(text, row)
+    } else {
+      self$write_line_in_cell(text, row, "text")
+    }
+  },
+
+  write_header = function(text, row) {
+    header_level <- stringr::str_extract("^#*", text) %>%
+      stringr::str_count("#")
+    text <- stringr::str_remove(text, "^#* *")
+    self$write_line_in_cell(text, row, paste0("h", header_level))
   },
 
   insert_vector = function(x, style) {
@@ -109,9 +137,9 @@ XlObj <- R6::R6Class("XlObj", list(
   },
 
   style_vector = function(vec_rows, vec_cols, name_rows, name_cols, style) {
-    self$style_cells(style, "vector", vec_rows, vec_cols)
+    self$style_cells("vector", vec_rows, vec_cols)
     if (!is.null(name_rows) & !is.null(name_cols))
-      self$style_cells(style, "vector.names", name_rows, name_cols)
+      self$style_cells("vector.names", name_rows, name_cols)
     invisible(self)
   },
 
@@ -161,20 +189,19 @@ XlObj <- R6::R6Class("XlObj", list(
   style_data_frame = function(style, data_rows, data_cols, header_rows, header_cols,
                               name_rows, name_cols) {
     ind <- expand.grid(rows = data_rows, cols = data_cols)
-    self$style_cells(style, "table", ind$rows, ind$cols)
+    self$style_cells("table", ind$rows, ind$cols)
 
     if (!is.null(header_rows) & !is.null(header_cols))
-      self$style_cells(style, "table.header", header_rows, header_cols)
+      self$style_cells("table.header", header_rows, header_cols)
 
     if (!is.null(name_rows) & !is.null(name_cols))
-      self$style_cells(style, "table.rownames", name_rows, name_cols)
+      self$style_cells("table.rownames", name_rows, name_cols)
 
     invisible(self)
   },
 
-  style_cells = function(style, key, rows, cols) {
-    args <- get_oxl_style_args(style, key)
-    oxl_style <- do.call(openxlsx::createStyle, args)
+  style_cells = function(cell_type, rows, cols) {
+    oxl_style <- self$get_cell_style(cell_type)
     openxlsx::addStyle(self$wb, self$current_ws, oxl_style, rows = rows,
                        cols = cols, stack = FALSE)
     invisible(self)
@@ -220,8 +247,8 @@ xl_obj <- XlObj$new()
 ### public interface to write on xl_obj
 
 #' @export
-insert_text <- function(text, style, type) {
-  xl_obj$insert_text(text, style = style, type = type)
+insert_text <- function(text, type) {
+  xl_obj$insert_text(text, type = type)
 }
 
 #' @export
@@ -261,4 +288,21 @@ get_oxl_style_args <- function(style, type) {
   style_opt_names <- paste("xl", type, arg_names, sep = ".")
   args <- setNames(kxl_style_get_value(style, style_opt_names), arg_names)
   purrr::discard(args, is.null)
+}
+
+initialize_style <- function() {
+  style <- kxl_style_get(knitr::opts_chunk$get())
+
+  cell_types <- c("text",
+                  paste0("text.", c("h1", "h2", "h3", "h4", "h5", "h6",
+                                  "error", "warning", "message",
+                                  "source")),
+                  "vector", "vector.names",
+                  "table", "table.header", "table.rownames")
+  setNames(purrr::map(cell_types, ~ create_cell_style(style, cell_type = .x)), cell_types)
+}
+
+create_cell_style <- function(style, cell_type) {
+  args <- get_oxl_style_args(style, type = cell_type)
+  do.call(openxlsx::createStyle, args)
 }
