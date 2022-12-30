@@ -81,10 +81,10 @@ XlObj <- R6::R6Class("XlObj", list(
   },
 
   write_header = function(text, row) {
-    header_level <- stringr::str_extract("^#*", text) %>%
+    header_level <- stringr::str_extract(text, "^#*") %>%
       stringr::str_count("#")
     text <- stringr::str_remove(text, "^#* *")
-    self$write_line_in_cell(text, row, paste0("h", header_level))
+    self$write_line_in_cell(text, row, paste0("text.h", header_level))
   },
 
   insert_vector = function(x, style) {
@@ -270,21 +270,7 @@ insert_image <- function(fn, width, height, units, dpi) {
 ### Styles
 
 get_oxl_style_args <- function(style, type) {
-  arg_names <- c("fontName",
-                 "fontSize",
-                 "fontColour",
-                 "numFmt",
-                 "border",
-                 "borderColour",
-                 "borderStyle",
-                 "bgFill",
-                 "fgFill",
-                 "halign",
-                 "valign",
-                 "textDecoration",
-                 "wrapText",
-                 "textRotation",
-                 "indent")
+  arg_names <- setdiff(get_base_cell_opts(), "rowHeight")
   style_opt_names <- paste("xl", type, arg_names, sep = ".")
   args <- setNames(kxl_style_get_value(style, style_opt_names), arg_names)
   purrr::discard(args, is.null)
