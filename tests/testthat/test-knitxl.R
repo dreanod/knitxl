@@ -91,3 +91,14 @@ test_that("bullet list works", {
     sep = "\n"
   ))
 })
+
+
+test_that("hyperlinks work", {
+  expect_snapshot_xl("hyperlinks", paste(
+  "A string with an [hyperlink](https://en.wikipedia.org)",
+  "A string with an [hyperlink](https://en.wikipedia.org) and another [hyperlink](https://fr.wikipedia.org)",
+  "**A bold string with an [hyperlink](https://en.wikipedia.org)**",
+  "* A list with an [hyperlink](https://en.wikipedia.org)",
+  sep = "\n"
+  ))
+})

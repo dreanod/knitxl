@@ -177,4 +177,23 @@ test_that("md to openxml works", {
                        "</r>",
                      "</si>")
   expect_equal(md %>% t2xml %>% md2oxml %>% ppxml, oxml %>% ppxml)
+
+  md <- "A string with an [hyperlink](url)"
+  oxml <- glue::glue("<si>",
+                       "<r>",
+                         "<t xml:space=\"preserve\">A string with an </t>",
+                       "</r>",
+                       "<r>",
+                         "<rPr>",
+                           "<u/>",
+                           "<sz val=\"12\"/>",
+                           "<color rgb =\"FF2A61BB\"/>",
+                           "<rFont val=\"Calibri\"/>",
+                           "<family val=\"2\"/>",
+                           "<scheme val=\"minor\"/>",
+                         "</rPr>",
+                         "<t xml:space=\"preserve\">hyperlink</t>",
+                       "</r>",
+                     "</si>")
+  expect_equal(md %>% t2xml %>% md2oxml %>% ppxml, oxml %>% ppxml)
 })

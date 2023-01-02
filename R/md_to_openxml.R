@@ -52,15 +52,24 @@ html2oxml_for_text_nodes <- function(html_text_node) {
   is_italic <- "em" %in% parents
   is_bold <- "strong" %in% parents
   is_strike <- "del" %in% parents
+  is_hlink <- "a" %in% parents
+
   text <- html_text_node %>% xml2::xml_text()
-  build_oxml_text_node(text, italic = is_italic, bold = is_bold, strike = is_strike)
+
+  fontcolor <- NULL
+  if (is_hlink)
+    fontcolor <- "FF2A61BB"
+
+  build_oxml_text_node(text, italic = is_italic, bold = is_bold,
+                       strike = is_strike, underline = is_hlink,
+                       color = fontcolor)
 }
 
-build_oxml_text_node <- function(text, italic, bold, strike) {
-  if (!italic & !bold & !strike)
-    build_simple_oxml_text_node(text)
+build_oxml_text_node <- function(text, italic, bold, strike, underline, color) {
+  if (any(italic, bold, strike, underline, !is.null(color)))
+    build_complex_oxml_text_node(text, italic, bold, strike, underline, color)
   else
-    build_complex_oxml_text_node(text, italic, bold, strike)
+    build_simple_oxml_text_node(text)
 }
 
 build_simple_oxml_text_node <- function(text) {
@@ -70,16 +79,25 @@ build_simple_oxml_text_node <- function(text) {
     xml2::read_xml()
 }
 
-build_complex_oxml_text_node <- function(text, italic, bold, strike) {
+build_complex_oxml_text_node <- function(text, italic, bold, strike, underline,
+                                         color) {
   mod_tags <- if (italic) "<i/>" else ""
   mod_tags <- paste0(mod_tags, if (bold) "<b/>" else "")
   mod_tags <- paste0(mod_tags, if (strike) "<strike/>" else "")
+  mod_tags <- paste0(mod_tags, if (underline) "<u/>" else "")
+
+  if (is.null(color)) {
+    color_attr <- "theme=\"1\""
+  } else {
+    color_attr <- paste0("rgb=\"", color, "\"")
+  }
+
   glue::glue(
     "<r>",
       "<rPr>",
         "{mod_tags}",
         "<sz val=\"12\"/>",
-        "<color theme=\"1\"/>",
+        "<color {color_attr}/>",
         "<rFont val=\"Calibri\"/>",
         "<family val=\"2\"/>",
         "<scheme val=\"minor\"/>",

@@ -68,8 +68,16 @@ XlObj <- R6::R6Class("XlObj", list(
   },
 
   write_line_in_cell = function(text, row, cell_type) {
-    if (stringr::str_length(text) > 0)
+    if (stringr::str_length(text) > 0) {
       text <- paste0(get_md_string_flag(), text)
+
+      if (cell_type == "text" & cell_has_hyperlink(text)) {
+        link <- get_cell_hyperlink(text)
+        text <- setNames(link, text)
+        class(text) <- "hyperlink"
+      }
+    }
+
     openxlsx::writeData(self$wb, self$current_ws, text, startRow = row)
     self$style_cells(cell_type, row, 1)
   },
@@ -305,4 +313,22 @@ initialize_style <- function() {
 create_cell_style <- function(style, cell_type) {
   args <- get_oxl_style_args(style, type = cell_type)
   do.call(openxlsx::createStyle, args)
+}
+
+## Hyperlinks
+
+cell_has_hyperlink <- function(text) {
+  text %>%
+    commonmark::markdown_html() %>%
+    xml2::read_xml() %>%
+    xml2::xml_find_all("//a") %>%
+    length() > 0
+}
+
+get_cell_hyperlink <- function(text) {
+  text %>%
+    commonmark::markdown_html() %>%
+    xml2::read_xml() %>%
+    xml2::xml_find_first("//a") %>%
+    xml2::xml_attr("href")
 }
