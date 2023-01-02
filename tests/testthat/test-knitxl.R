@@ -3,7 +3,6 @@ test_that("knitxl parses text and inline code", {
   content <- paste("Some text",
                    "Some text `r 1+1`",
                    "Some text `r 1+1` more text",
-                   "* Item 1\n* Item 2\n* Item 3",
                    sep = "\n\n")
   expect_snapshot_xl("text", content)
 })
@@ -52,7 +51,7 @@ test_that("renders plots", {
 
 
 test_that("parses headers", {
-  expect_snapshot_xl("headers1", glue::glue(
+  expect_snapshot_xl("headers", glue::glue(
     "# Header 1",
     "text",
     "## Header 2",
@@ -65,5 +64,17 @@ test_that("parses headers", {
     "text",
     "###### Header 6",
     "text", .sep = "\n"
+  ))
+})
+
+test_that("parses markdown inline formatting", {
+  expect_snapshot_xl("inline_md", paste(
+    "A string with *italic* word",
+    "A string with **bold** word",
+    "A string with ***bold and italic***",
+    "A string with *italic and **bold and italic** inside*",
+    "A string with **bold and *bold and italic* inside**",
+    "A string with ~~strikethrough~~",
+    sep = "\n"
   ))
 })

@@ -1,6 +1,6 @@
 
 
-
+#' @importFrom magrittr %<>%
 XlObj <- R6::R6Class("XlObj", list(
   fn = NA,
   wb = NA,
@@ -68,6 +68,8 @@ XlObj <- R6::R6Class("XlObj", list(
   },
 
   write_line_in_cell = function(text, row, cell_type) {
+    if (stringr::str_length(text) > 0)
+      text <- paste0(get_md_string_flag(), text)
     openxlsx::writeData(self$wb, self$current_ws, text, startRow = row)
     self$style_cells(cell_type, row, 1)
   },
@@ -235,9 +237,14 @@ XlObj <- R6::R6Class("XlObj", list(
   },
 
   write = function() {
+    self$postprocess()
     flag <- openxlsx::saveWorkbook(self$wb, self$fn, overwrite = TRUE,
                                    returnValue = TRUE)
     invisible(self)
+  },
+
+  postprocess = function() {
+    self$wb@.xData$sharedStrings %<>% postprocess_shared_strings()
   }
 ))
 

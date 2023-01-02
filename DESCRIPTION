@@ -12,6 +12,7 @@ LazyData: true
 Depends: 
     knitr (>= 1.39)
 Imports: 
+    magrittr (>= 2.0.3),
     openxlsx (>= 4.2.5),
     purrr (>= 0.3.4),
     R6,

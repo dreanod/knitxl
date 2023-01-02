@@ -36,3 +36,7 @@ get_cell_types <- function() {
     "table.rownames"
     )
 }
+
+get_md_string_flag <- function() {
+  "!!! knitxl: markdown line to parse!!!"
+}
