@@ -78,3 +78,16 @@ test_that("parses markdown inline formatting", {
     sep = "\n"
   ))
 })
+
+test_that("bullet list works", {
+  expect_snapshot_xl("bullet_list", paste(
+    "Bullet list 1:",
+    "* Simple item",
+    "* **Bold item**",
+    "",
+    "Bullet list 2",
+    "- Simple item",
+    "- **bold** and *italic*",
+    sep = "\n"
+  ))
+})

@@ -77,6 +77,8 @@ XlObj <- R6::R6Class("XlObj", list(
   parse_and_write_md_line = function(text, row) {
     if (stringr::str_starts(text, "^#")) {
       self$write_header(text, row)
+    } else if (stringr::str_starts(text, "^[*-] ")) {
+      self$write_list(text, row)
     } else {
       self$write_line_in_cell(text, row, "text")
     }
@@ -87,6 +89,11 @@ XlObj <- R6::R6Class("XlObj", list(
       stringr::str_count("#")
     text <- stringr::str_remove(text, "^#* *")
     self$write_line_in_cell(text, row, paste0("text.h", header_level))
+  },
+
+  write_list = function(text, row) {
+    text <- stringr::str_replace(text, "^[*-] ", "• ")
+    self$write_line_in_cell(text, row, "text")
   },
 
   insert_vector = function(x, style) {
