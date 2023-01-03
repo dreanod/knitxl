@@ -197,3 +197,24 @@ test_that("md to openxml works", {
                      "</si>")
   expect_equal(md %>% t2xml %>% md2oxml %>% ppxml, oxml %>% ppxml)
 })
+
+test_that("extract ws name from header line", {
+  expect_equal(extract_ws_name_option("# Header"), NULL)
+  expect_equal(extract_ws_name_option("# Header {ws_name=myws}"), "myws")
+  expect_equal(extract_ws_name_option("## Header {ws_name=myws}"), "myws")
+  expect_equal(extract_ws_name_option("## Header {other_opt=myws}"), NULL)
+  expect_equal(extract_ws_name_option("## Header {ws_name=myws, other_opt=opt1}"), "myws")
+  expect_equal(extract_ws_name_option("## Header {other_opt=opt1, ws_name=myws}"), "myws")
+  expect_equal(extract_ws_name_option("## Header {other_opt1=opt1, ws_name=myws, other_opt2=opt2}"), "myws")
+  expect_equal(extract_ws_name_option("## Header {ws_name=myws1, ws_name=myws2}"), "myws1")
+
+  expect_equal(remove_option_string("# Header"), "# Header")
+  expect_equal(remove_option_string("# Header {ws_name=myws}"), "# Header")
+  expect_equal(remove_option_string("## Header {ws_name=myws}"), "## Header")
+  expect_equal(remove_option_string("## Header {other_opt=myws}"), "## Header")
+  expect_equal(remove_option_string("## Header {ws_name=myws, other_opt=opt1}"), "## Header")
+  expect_equal(remove_option_string("## Header {other_opt=opt1, ws_name=myws}"), "## Header")
+  expect_equal(remove_option_string("## Header {other_opt1=opt1, ws_name=myws, other_opt2=opt2}"), "## Header")
+  expect_equal(remove_option_string("## Header {ws_name=myws1, ws_name=myws2}"), "## Header")
+})
+

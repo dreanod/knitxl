@@ -50,24 +50,22 @@ XlObj <- R6::R6Class("XlObj", list(
       new_rows <- self$current_row:(self$current_row + n_text_rows - 1)
 
       purrr::walk(1:n_text_rows, ~ self$write_line(text = text[.x],
-                                                   row = new_rows[.x],
                                                    type = type))
 
-      self$increment_current_row(n_text_rows + 1)
+      self$newline()
 
-      self$empty <- FALSE
       invisible(self)
     }
   },
 
-  write_line = function(text, row, type) {
+  write_line = function(text, type) {
     if (type == "text")
-      self$parse_and_write_md_line(text, row)
+      self$parse_and_write_md_line(text)
     else
-      self$write_line_in_cell(text, row, cell_type = type)
+      self$write_line_in_cell(text, cell_type = type)
   },
 
-  write_line_in_cell = function(text, row, cell_type) {
+  write_line_in_cell = function(text, cell_type) {
     if (stringr::str_length(text) > 0) {
       text <- paste0(get_md_string_flag(), text)
 
@@ -78,30 +76,40 @@ XlObj <- R6::R6Class("XlObj", list(
       }
     }
 
-    openxlsx::writeData(self$wb, self$current_ws, text, startRow = row)
-    self$style_cells(cell_type, row, 1)
+    openxlsx::writeData(self$wb, self$current_ws, text, startRow = self$current_row)
+    self$empty <- FALSE
+    self$style_cells(cell_type, self$current_row, 1)
+    self$newline()
+    invisible(self)
   },
 
-  parse_and_write_md_line = function(text, row) {
+  parse_and_write_md_line = function(text) {
     if (stringr::str_starts(text, "^#")) {
-      self$write_header(text, row)
+      self$write_header(text)
     } else if (stringr::str_starts(text, "^[*-] ")) {
-      self$write_list(text, row)
+      self$write_list(text)
     } else {
-      self$write_line_in_cell(text, row, "text")
+      self$write_line_in_cell(text, "text")
     }
   },
 
-  write_header = function(text, row) {
+  write_header = function(text) {
     header_level <- stringr::str_extract(text, "^#*") %>%
       stringr::str_count("#")
     text <- stringr::str_remove(text, "^#* *")
-    self$write_line_in_cell(text, row, paste0("text.h", header_level))
+
+    ws_name <- extract_ws_name_option(text)
+    if (!is.null(ws_name)) {
+      text <- remove_option_string(text)
+      self$new_worksheet(ws_name)
+    }
+
+    self$write_line_in_cell(text, paste0("text.h", header_level))
   },
 
-  write_list = function(text, row) {
+  write_list = function(text) {
     text <- stringr::str_replace(text, "^[*-] ", "• ")
-    self$write_line_in_cell(text, row, "text")
+    self$write_line_in_cell(text, "text")
   },
 
   insert_vector = function(x, style) {
@@ -244,6 +252,22 @@ XlObj <- R6::R6Class("XlObj", list(
   increment_current_row = function(n) {
     self$current_row <- self$current_row + n
     invisible(self)
+  },
+
+  newline = function() {
+    self$increment_current_row(1)
+    invisible(self)
+  },
+
+  new_worksheet = function(ws_name) {
+    if (self$is_empty()) {
+      names(self$wb) <- ws_name
+    } else {
+      gridlines <- kxl_style_get_value(knitr::opts_chunk$get(), "xl.gridlines")
+      openxlsx::addWorksheet(self$wb, ws_name, gridLines = gridlines)
+      self$current_ws <- self$current_ws + 1
+      self$current_row <- 1
+    }
   },
 
   view = function() {

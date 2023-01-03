@@ -107,3 +107,16 @@ build_complex_oxml_text_node <- function(text, italic, bold, strike, underline,
   ) %>%
     xml2::read_xml()
 }
+
+extract_ws_name_option <- function(header_md_text) {
+  all_opts <- stringr::str_extract(header_md_text, "(?<=\\{).*(?=\\} *$)")
+  if (is.na(all_opts)) return(NULL)
+
+  opt <- stringr::str_extract(all_opts, "(?<=ws_name=)[[:alnum:]_]*")
+  if(is.na(opt)) return(NULL)
+  opt
+}
+
+remove_option_string <- function(header_md_text) {
+  stringr::str_remove(header_md_text, " *\\{.*\\} *$")
+}

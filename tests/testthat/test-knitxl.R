@@ -102,3 +102,17 @@ test_that("hyperlinks work", {
   sep = "\n"
   ))
 })
+
+test_that("adding new worksheet works", {
+  expect_snapshot_xl("new_ws", paste(
+    "# This is Worksheet 1 {ws_name=myws1}",
+    "Text in Worksheet 1",
+    "## This is Worksheet 2 {ws_name=myws2}",
+    build_chunk("mtcars"),
+    "### This is still in Worksheet2",
+    "Text in Worksheet 2",
+    "## This is Worksheet 3 {ws_name=myws3}",
+    "Text is Worksheet 3",
+    sep = "\n"
+  ))
+})
