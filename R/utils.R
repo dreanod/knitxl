@@ -5,3 +5,7 @@ split_string_by_line <- function(string) {
   string <- purrr::flatten_chr(string)
   string
 }
+
+"%||%" <- function(a, b) {
+  if (!is.null(a)) a else b
+}

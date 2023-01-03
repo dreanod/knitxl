@@ -53,21 +53,32 @@ html2oxml_for_text_nodes <- function(html_text_node) {
   is_bold <- "strong" %in% parents
   is_strike <- "del" %in% parents
   is_hlink <- "a" %in% parents
+  is_code <- "code" %in% parents
+  is_underline <- FALSE
+  font <- NULL
+  fontcolor <- NULL
 
   text <- html_text_node %>% xml2::xml_text()
 
-  fontcolor <- NULL
-  if (is_hlink)
+  if (is_code) {
+    font <- "Courier New"
+    fontcolor <- "FF395392"
+    is_bold <- TRUE
+  }
+
+  if (is_hlink) {
     fontcolor <- "FF2A61BB"
+    is_underline = TRUE
+  }
 
   build_oxml_text_node(text, italic = is_italic, bold = is_bold,
-                       strike = is_strike, underline = is_hlink,
-                       color = fontcolor)
+                       strike = is_strike, underline = is_underline,
+                       color = fontcolor, font = font)
 }
 
-build_oxml_text_node <- function(text, italic, bold, strike, underline, color) {
-  if (any(italic, bold, strike, underline, !is.null(color)))
-    build_complex_oxml_text_node(text, italic, bold, strike, underline, color)
+build_oxml_text_node <- function(text, italic, bold, strike, underline, color, font) {
+  if (any(italic, bold, strike, underline, !is.null(color), !is.null(font)))
+    build_complex_oxml_text_node(text, italic, bold, strike, underline, color, font)
   else
     build_simple_oxml_text_node(text)
 }
@@ -80,7 +91,7 @@ build_simple_oxml_text_node <- function(text) {
 }
 
 build_complex_oxml_text_node <- function(text, italic, bold, strike, underline,
-                                         color) {
+                                         color, font) {
   mod_tags <- if (italic) "<i/>" else ""
   mod_tags <- paste0(mod_tags, if (bold) "<b/>" else "")
   mod_tags <- paste0(mod_tags, if (strike) "<strike/>" else "")
@@ -92,15 +103,15 @@ build_complex_oxml_text_node <- function(text, italic, bold, strike, underline,
     color_attr <- paste0("rgb=\"", color, "\"")
   }
 
+  font_attr <- font %||% "Calibri"
+
   glue::glue(
     "<r>",
       "<rPr>",
         "{mod_tags}",
         "<sz val=\"12\"/>",
         "<color {color_attr}/>",
-        "<rFont val=\"Calibri\"/>",
-        "<family val=\"2\"/>",
-        "<scheme val=\"minor\"/>",
+        "<rFont val=\"{font_attr}\"/>",
       "</rPr>",
       "<t xml:space=\"preserve\">{text}</t>",
     "</r>"

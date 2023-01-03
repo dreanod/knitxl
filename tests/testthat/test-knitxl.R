@@ -132,6 +132,13 @@ test_that("horizontal rules work", {
 
 test_that("insert images works", {})
 
-test_that("inline R code works", {})
+test_that("inline R code works", {
+  expect_snapshot_xl("inline_code", paste(
+    "# Testing inline code",
+    "A string with `code` inside.",
+    "Another string with `more code` and `more and more code`.",
+    sep = "\n"
+  ))
+})
 
 test_that("plain code blocks works", {})
