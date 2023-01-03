@@ -116,3 +116,22 @@ test_that("adding new worksheet works", {
     sep = "\n"
   ))
 })
+
+test_that("horizontal rules work", {
+  expect_snapshot_xl("hrules", paste(
+    "# Testing Hrules",
+    "",
+    "Text before hrule",
+    "******",
+    "Text between hrules",
+    "-----",
+    "Text after hrules",
+    sep = "\n"
+  ))
+})
+
+test_that("insert images works", {})
+
+test_that("inline R code works", {})
+
+test_that("plain code blocks works", {})

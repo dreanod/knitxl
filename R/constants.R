@@ -25,6 +25,7 @@ get_cell_types <- function() {
     "text.h4",
     "text.h5",
     "text.h6",
+    "text.hrule",
     "text.error",
     "text.warning",
     "text.message",

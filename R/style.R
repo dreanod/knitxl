@@ -30,6 +30,7 @@ kxl_style_default <- function() {
             xl.fontName = "Calibri",
             xl.fontSize = 11,
             xl.rowHeight = 12.75,
+
             xl.text.h1.fontName = "Calibri Light (Headings)",
             xl.text.h1.fontSize = 18,
             xl.text.h1.fontColour = "#475368",
@@ -67,19 +68,26 @@ kxl_style_default <- function() {
             xl.text.h6.fontColour = "#475368",
             xl.text.h6.textDecoration = "italic",
 
+            xl.text.hrule.border = "top",
+            xl.text.hrule.borderStyle = "thick",
+            xl.text.hrule.borderColour = "black",
+
             xl.text.error.fontColour = "red",
             xl.text.error.textDecoration = "bold",
             xl.text.warning.fontColour = "orange",
             xl.text.warning.textDecoration = "bold",
             xl.text.message.fontColour = "blue",
             xl.text.message.textDecoration = "italic",
+
             xl.text.source.fontName = "Courier New",
+
             xl.vector.numFmt = "COMMA",
             xl.vector.direction = "vertical",
             xl.vector.names.textDecoration = "bold",
             xl.vector.names.border = "right",
             xl.vector.names.borderStyle = "thin",
             xl.vector.names.borderColour = "black",
+
             xl.table.numFmt = "COMMA",
             xl.table.direction = "vertical",
             xl.table.maxrows = 50,

@@ -88,9 +88,21 @@ XlObj <- R6::R6Class("XlObj", list(
       self$write_header(text)
     } else if (stringr::str_starts(text, "^[*-] ")) {
       self$write_list(text)
+    } else if (detect_hrule(text)) {
+      self$insert_hrule()
     } else {
       self$write_line_in_cell(text, "text")
     }
+    invisible(self)
+  },
+
+  insert_hrule = function() {
+    self$newline()
+    openxlsx::writeData(self$wb, self$current_ws, "", startRow = self$current_row)
+    self$style_cells("text.hrule", self$current_row, 1:10)
+    self$empty <- FALSE
+    self$newline()
+    invisible(self)
   },
 
   write_header = function(text) {
@@ -261,7 +273,7 @@ XlObj <- R6::R6Class("XlObj", list(
 
   new_worksheet = function(ws_name) {
     if (self$is_empty()) {
-      names(self$wb) <- ws_name
+      openxlsx::renameWorksheet(self$wb, 1, ws_name)
     } else {
       gridlines <- kxl_style_get_value(knitr::opts_chunk$get(), "xl.gridlines")
       openxlsx::addWorksheet(self$wb, ws_name, gridLines = gridlines)
@@ -325,12 +337,7 @@ get_oxl_style_args <- function(style, type) {
 initialize_style <- function() {
   style <- kxl_style_get(knitr::opts_chunk$get())
 
-  cell_types <- c("text",
-                  paste0("text.", c("h1", "h2", "h3", "h4", "h5", "h6",
-                                  "error", "warning", "message",
-                                  "source")),
-                  "vector", "vector.names",
-                  "table", "table.header", "table.rownames")
+  cell_types <- get_cell_types()
   setNames(purrr::map(cell_types, ~ create_cell_style(style, cell_type = .x)), cell_types)
 }
 

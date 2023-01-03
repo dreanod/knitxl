@@ -218,3 +218,25 @@ test_that("extract ws name from header line", {
   expect_equal(remove_option_string("## Header {ws_name=myws1, ws_name=myws2}"), "## Header")
 })
 
+test_that("detect hrules works", {
+  expect_equal(detect_hrule("******"), TRUE)
+  expect_equal(detect_hrule("  ******"), FALSE)
+  expect_equal(detect_hrule("*****  "), TRUE)
+  expect_equal(detect_hrule("***"), TRUE)
+  expect_equal(detect_hrule("**"), FALSE)
+  expect_equal(detect_hrule("*** Bla"), FALSE)
+  expect_equal(detect_hrule("bla***"), FALSE)
+  expect_equal(detect_hrule("***"), TRUE)
+
+  expect_equal(detect_hrule("------"), TRUE)
+  expect_equal(detect_hrule("  ------"), FALSE)
+  expect_equal(detect_hrule("-----  "), TRUE)
+  expect_equal(detect_hrule("---"), TRUE)
+  expect_equal(detect_hrule("--"), FALSE)
+  expect_equal(detect_hrule("--- Bla"), FALSE)
+  expect_equal(detect_hrule("bla---"), FALSE)
+  expect_equal(detect_hrule("---"), TRUE)
+
+  expect_equal(detect_hrule("-*-"), FALSE)
+})
+

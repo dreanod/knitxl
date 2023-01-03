@@ -120,3 +120,8 @@ extract_ws_name_option <- function(header_md_text) {
 remove_option_string <- function(header_md_text) {
   stringr::str_remove(header_md_text, " *\\{.*\\} *$")
 }
+
+detect_hrule <- function(md_line) {
+  stringr::str_detect(md_line, "^(\\*{3,}|\\-{3,}) *$")
+}
+
