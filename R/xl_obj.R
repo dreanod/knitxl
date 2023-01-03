@@ -8,6 +8,7 @@ XlObj <- R6::R6Class("XlObj", list(
   current_row = NA,
   empty = NA,
   cell_styles = NA,
+  is_in_code_block = NA,
 
   reset = function() {
     self$fn <- ""
@@ -18,6 +19,7 @@ XlObj <- R6::R6Class("XlObj", list(
     self$current_ws = 1
     self$current_row = 1
     self$empty <- TRUE
+    self$is_in_code_block <- FALSE
     invisible(self)
   },
 
@@ -59,10 +61,18 @@ XlObj <- R6::R6Class("XlObj", list(
   },
 
   write_line = function(text, type) {
-    if (type == "text")
-      self$parse_and_write_md_line(text)
-    else
+    if (detect_code_fence(text)) {
+      self$is_in_code_block <- !self$is_in_code_block
+      self$newline()
+    } else if (type == "text") {
+      if (self$is_in_code_block) {
+        self$write_line_in_cell(text, cell_type = "text.source")
+      } else {
+        self$parse_and_write_md_line(text)
+      }
+    } else {
       self$write_line_in_cell(text, cell_type = type)
+    }
   },
 
   write_line_in_cell = function(text, cell_type) {
@@ -277,6 +287,7 @@ XlObj <- R6::R6Class("XlObj", list(
     } else {
       gridlines <- kxl_style_get_value(knitr::opts_chunk$get(), "xl.gridlines")
       openxlsx::addWorksheet(self$wb, ws_name, gridLines = gridlines)
+      self$is_in_code_block <- FALSE
       self$current_ws <- self$current_ws + 1
       self$current_row <- 1
     }

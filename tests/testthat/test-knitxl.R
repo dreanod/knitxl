@@ -141,4 +141,20 @@ test_that("inline R code works", {
   ))
 })
 
-test_that("plain code blocks works", {})
+test_that("plain code blocks works", {
+  expect_snapshot_xl("code_block", paste(
+    "# Testing plain code blocks",
+    "Some text",
+    "```",
+    "code example",
+    "```",
+    "Some text",
+    "```",
+    "first line of code",
+    "second line of code",
+    "# A line with a comment",
+    "```",
+    "more text",
+    sep = "\n"
+  ))
+})

@@ -136,3 +136,7 @@ detect_hrule <- function(md_line) {
   stringr::str_detect(md_line, "^(\\*{3,}|\\-{3,}) *$")
 }
 
+detect_code_fence <- function(text) {
+  stringr::str_detect(text, "^``` *$")
+}
+
