@@ -247,3 +247,18 @@ test_that("parse images works", {
   expect_equal(get_path_to_images("Some text with image ![img](path_to_img)"), "path_to_img")
   expect_equal(get_path_to_images("Some text with image ![img1](path_to_img1) and other image ![img2](path_to_img2)"), c("path_to_img1", "path_to_img2"))
 })
+
+test_that("parse blockquote", {
+  expect_equal(detect_blockquote("Some text"), FALSE)
+  expect_equal(detect_blockquote("Some text >"), FALSE)
+  expect_equal(detect_blockquote("> Some text"), TRUE)
+  expect_equal(detect_blockquote(">Some text"), TRUE)
+
+  expect_equal(remove_blockquote("Some text"), "Some text")
+  expect_equal(remove_blockquote("> Some text"), "Some text")
+  expect_equal(remove_blockquote(" > Some text"), "Some text")
+  expect_equal(remove_blockquote(">Some text"), "Some text")
+  expect_equal(remove_blockquote(">>Some text"), ">Some text")
+  expect_equal(remove_blockquote("> >Some text"), ">Some text")
+  expect_equal(remove_blockquote(">> Some text"), "> Some text")
+})

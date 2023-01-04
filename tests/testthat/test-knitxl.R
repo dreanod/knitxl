@@ -167,4 +167,14 @@ test_that("plain code blocks works", {
   ))
 })
 
-test_that("blockquotes work", {})
+test_that("blockquotes work", {
+  expect_snapshot_xl("blockquote", paste(
+    "Some normal text",
+    "> A blockquote",
+    "Some other normal text",
+    "",
+    "> blockquote 1",
+    "> blockquote 2",
+    sep = "\n"
+  ))
+})

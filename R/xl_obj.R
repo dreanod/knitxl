@@ -102,6 +102,8 @@ XlObj <- R6::R6Class("XlObj", list(
       self$write_list(text)
     } else if (detect_hrule(text)) {
       self$insert_hrule()
+    } else if (detect_blockquote(text)) {
+      self$write_line_in_cell(text %>% remove_blockquote(), "text.blockquote")
     } else {
       self$write_line_in_cell(text, "text")
     }

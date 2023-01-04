@@ -153,3 +153,11 @@ get_path_to_images <- function(text) {
     xml2::xml_find_all("img") %>%
     purrr::map_chr(~ xml2::xml_attr(.x, "src"))
 }
+
+detect_blockquote <- function(text) {
+  stringr::str_detect(text, "^ *>")
+}
+
+remove_blockquote <- function(text) {
+  stringr::str_remove(text, "^ *> *")
+}

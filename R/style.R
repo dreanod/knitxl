@@ -72,6 +72,10 @@ kxl_style_default <- function() {
             xl.text.hrule.borderStyle = "thick",
             xl.text.hrule.borderColour = "black",
 
+            xl.text.blockquote.textDecoration = "italic",
+            xl.text.blockquote.indent = 1,
+            xl.text.blockquote.fontColour = "#7F7F7F",
+
             xl.text.error.fontColour = "red",
             xl.text.error.textDecoration = "bold",
             xl.text.warning.fontColour = "orange",
