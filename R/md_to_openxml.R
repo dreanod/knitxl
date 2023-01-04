@@ -140,3 +140,16 @@ detect_code_fence <- function(text) {
   stringr::str_detect(text, "^``` *$")
 }
 
+detect_images <- function(text) {
+  commonmark::markdown_html(text) %>%
+    xml2::read_xml() %>%
+    xml2::xml_find_all("img") %>%
+    length() > 0
+}
+
+get_path_to_images <- function(text) {
+  commonmark::markdown_html(text) %>%
+    xml2::read_xml() %>%
+    xml2::xml_find_all("img") %>%
+    purrr::map_chr(~ xml2::xml_attr(.x, "src"))
+}

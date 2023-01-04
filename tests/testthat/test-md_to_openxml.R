@@ -238,3 +238,12 @@ test_that("detect hrules works", {
   expect_equal(detect_hrule("-*-"), FALSE)
 })
 
+test_that("parse images works", {
+  expect_equal(detect_images("Some text"), FALSE)
+  expect_equal(detect_images("Some text with image ![img](path_to_img)"), TRUE)
+  expect_equal(detect_images("Some text with image ![img1](path_to_img1) and other image ![img2](path_to_img2)"), TRUE)
+
+  expect_equal(get_path_to_images("Some text") %>% length(), 0)
+  expect_equal(get_path_to_images("Some text with image ![img](path_to_img)"), "path_to_img")
+  expect_equal(get_path_to_images("Some text with image ![img1](path_to_img1) and other image ![img2](path_to_img2)"), c("path_to_img1", "path_to_img2"))
+})

@@ -67,23 +67,25 @@ XlObj <- R6::R6Class("XlObj", list(
     } else if (type == "text") {
       if (self$is_in_code_block) {
         self$write_line_in_cell(text, cell_type = "text.source")
-      } else {
+      } else if (stringr::str_length(text) > 0) {
         self$parse_and_write_md_line(text)
+      } else {
+        self$newline()
       }
     } else {
       self$write_line_in_cell(text, cell_type = type)
     }
+
+    invisible(self)
   },
 
   write_line_in_cell = function(text, cell_type) {
-    if (stringr::str_length(text) > 0) {
-      text <- paste0(get_md_string_flag(), text)
+    text <- paste0(get_md_string_flag(), text)
 
-      if (cell_type == "text" & cell_has_hyperlink(text)) {
-        link <- get_cell_hyperlink(text)
-        text <- setNames(link, text)
-        class(text) <- "hyperlink"
-      }
+    if (cell_type == "text" & cell_has_hyperlink(text)) {
+      link <- get_cell_hyperlink(text)
+      text <- setNames(link, text)
+      class(text) <- "hyperlink"
     }
 
     openxlsx::writeData(self$wb, self$current_ws, text, startRow = self$current_row)
@@ -103,6 +105,25 @@ XlObj <- R6::R6Class("XlObj", list(
     } else {
       self$write_line_in_cell(text, "text")
     }
+
+    if (detect_images(text)) {
+      self$insert_images_from_md(text)
+    }
+
+    invisible(self)
+  },
+
+  insert_images_from_md = function(text) {
+    images <- get_path_to_images(text)
+
+    purrr::walk(images, function(path) {
+      img <- readbitmap::read.bitmap(path)
+      height <- dim(img)[1]
+      width <- dim(img)[2]
+      self$insert_image(fn = path, width = width, height = height,
+                      units = "px", dpi = 72)
+    })
+
     invisible(self)
   },
 
@@ -261,9 +282,11 @@ XlObj <- R6::R6Class("XlObj", list(
                           width = width,
                           height = height,
                           startRow = self$current_row,
-                          startCol = 1,
+                          startCol = 2,
                           units = units,
                           dpi = dpi)
+    height <- convert2inch(height, units)
+    width <- convert2inch(width, units)
     n_rows_inserted <- ceiling(height * 71.4 / 15)
     self$increment_current_row(n_rows_inserted + 1)
 

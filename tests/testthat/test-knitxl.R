@@ -130,7 +130,15 @@ test_that("horizontal rules work", {
   ))
 })
 
-test_that("insert images works", {})
+test_that("insert images works", {
+  path_to_img <- system.file("extdata", "einstein.jpg", package = "openxlsx")
+  expect_snapshot_xl("image", paste(
+    paste0("Some text with an image ![alt text](", path_to_img, ") followed by more text"),
+    "",
+    paste0("Text with image ![img1](", path_to_img, ") followed by image ![img2](", path_to_img, ")"),
+    sep = "\n"
+  ))
+})
 
 test_that("inline R code works", {
   expect_snapshot_xl("inline_code", paste(
@@ -158,3 +166,5 @@ test_that("plain code blocks works", {
     sep = "\n"
   ))
 })
+
+test_that("blockquotes work", {})
