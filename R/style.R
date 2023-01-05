@@ -85,14 +85,14 @@ kxl_style_default <- function() {
 
             xl.text.source.fontName = "Courier New",
 
-            xl.vector.numFmt = "COMMA",
+            xl.vector.numFmt = "GENERAL",
             xl.vector.direction = "vertical",
             xl.vector.names.textDecoration = "bold",
             xl.vector.names.border = "right",
             xl.vector.names.borderStyle = "thin",
             xl.vector.names.borderColour = "black",
 
-            xl.table.numFmt = "COMMA",
+            xl.table.numFmt = "GENERAL",
             xl.table.direction = "vertical",
             xl.table.maxrows = 50,
             xl.table.colNames = TRUE,
