@@ -24,6 +24,12 @@ md2oxml <- function(oxml_string_item) {
               xml_item %>% xml2::xml_text() %>% length() == 1)
 
   md_text <- xml_item %>% xml2::xml_text()
+
+  list_prefix <- NULL
+  if (detect_md_list_item(md_text)) {
+    md_text <- protect_md_list_prefix(md_text)
+  }
+
   html_text <- commonmark::markdown_html(md_text, extensions = "strikethrough")
 
   if (is_simple_string(html_text))
@@ -40,7 +46,7 @@ md2oxml <- function(oxml_string_item) {
   new_oxml %>%
     as.character() %>%
     stringr::str_remove(stringr::coll("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n")) %>%
-    stringr::str_replace_all(">[:space:]*<", "><")
+    stringr::str_replace_all(">\n *<", "><")
 }
 
 is_simple_string <- function(html_text) {
@@ -160,4 +166,31 @@ detect_blockquote <- function(text) {
 
 remove_blockquote <- function(text) {
   stringr::str_remove(text, "^ *> *")
+}
+
+detect_md_list_item <- function(text) {
+  stringr::str_detect(text, "^ *((\\*|\\-)|[:alnum:]\\.) ")
+}
+
+remove_md_list_prefix <- function(text) {
+  stringr::str_remove(text, "^ *((\\*|\\-)|[:alnum:]\\.)  *")
+}
+
+get_md_list_prefix <- function(text) {
+  prefix <- stringr::str_extract(text, "^ *((\\*|\\-)|[:alnum:]\\.) ")
+
+  if (is.na(prefix)) {
+    character(0)
+  } else {
+    prefix %>%
+      stringr::str_trim() %>%
+      stringr::str_replace("\\*|\\-", "•") %>%
+      paste0(" ")
+  }
+}
+
+protect_md_list_prefix <- function(text) {
+  prefix <- get_md_list_prefix(text)
+  text <- remove_md_list_prefix(text)
+  paste0("<span>", prefix, "</span>", text)
 }

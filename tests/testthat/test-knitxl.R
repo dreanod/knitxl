@@ -92,6 +92,19 @@ test_that("bullet list works", {
   ))
 })
 
+test_that("numbered lists work", {
+  expect_snapshot_xl("numbered_list", paste(
+    "Numbered list 1:",
+    "1. simple item",
+    "2. **bold** item",
+    "",
+    "Numbered list 2:",
+    "a. simple item",
+    "b. **bold** and *italic*",
+    sep = "\n"
+  ))
+})
+
 
 test_that("hyperlinks work", {
   expect_snapshot_xl("hyperlinks", paste(
@@ -99,6 +112,7 @@ test_that("hyperlinks work", {
   "A string with an [hyperlink](https://en.wikipedia.org) and another [hyperlink](https://fr.wikipedia.org)",
   "**A bold string with an [hyperlink](https://en.wikipedia.org)**",
   "* A list with an [hyperlink](https://en.wikipedia.org)",
+  "normal text **bold text** [hyperlink](https://yihui.org/knitr/)",
   sep = "\n"
   ))
 })
@@ -175,6 +189,18 @@ test_that("blockquotes work", {
     "",
     "> blockquote 1",
     "> blockquote 2",
+    sep = "\n"
+  ))
+})
+
+test_that("renders r source code", {
+  expect_snapshot_xl("r_source", paste(
+    "Some text",
+    "",
+    build_chunk(c(
+      "x <- 1 + 1",
+      "y <- 2 * x"
+    )),
     sep = "\n"
   ))
 })

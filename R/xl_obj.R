@@ -1,6 +1,5 @@
 
 
-#' @importFrom magrittr %<>%
 XlObj <- R6::R6Class("XlObj", list(
   fn = NA,
   wb = NA,
@@ -43,21 +42,22 @@ XlObj <- R6::R6Class("XlObj", list(
   },
 
   insert_text = function(text, type) {
-    stopifnot("`text` must be a character" = is.character(text),
-              "`text` must be of length 1" = length(text) == 1)
+    stopifnot("`text` must be a character" = is.character(text))
 
-    if (text != "") {
+    if (type != "text.source") {
       text <- split_string_by_line(text)
-      n_text_rows <- length(text)
-      new_rows <- self$current_row:(self$current_row + n_text_rows - 1)
-
-      purrr::walk(1:n_text_rows, ~ self$write_line(text = text[.x],
-                                                   type = type))
-
-      self$newline()
-
-      invisible(self)
+      if (all(text == "")) {
+        return(invisible(self))
+      }
     }
+
+    n_text_rows <- length(text)
+    new_rows <- self$current_row:(self$current_row + n_text_rows - 1)
+
+    purrr::walk(1:n_text_rows, ~ self$write_line(text = text[.x],
+                                                 type = type))
+    self$newline()
+    invisible(self)
   },
 
   write_line = function(text, type) {
@@ -98,8 +98,6 @@ XlObj <- R6::R6Class("XlObj", list(
   parse_and_write_md_line = function(text) {
     if (stringr::str_starts(text, "^#")) {
       self$write_header(text)
-    } else if (stringr::str_starts(text, "^[*-] ")) {
-      self$write_list(text)
     } else if (detect_hrule(text)) {
       self$insert_hrule()
     } else if (detect_blockquote(text)) {
@@ -150,11 +148,6 @@ XlObj <- R6::R6Class("XlObj", list(
     }
 
     self$write_line_in_cell(text, paste0("text.h", header_level))
-  },
-
-  write_list = function(text) {
-    text <- stringr::str_replace(text, "^[*-] ", "• ")
-    self$write_line_in_cell(text, "text")
   },
 
   insert_vector = function(x, style) {
@@ -359,7 +352,6 @@ insert_image <- function(fn, width, height, units, dpi) {
   xl_obj$insert_image(fn, width = width, height = height,
                       units = units, dpi = dpi)
 }
-
 
 ### Styles
 

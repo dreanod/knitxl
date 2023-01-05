@@ -192,8 +192,34 @@ test_that("md to openxml works", {
                      "</si>")
   expect_equal(md %>% t2xml %>% md2oxml %>% ppxml, oxml %>% ppxml)
 
-
-
+  md <- "A string with **bold and** [hyperlink](http://en.wikipedia.org)"
+  oxml <- glue::glue("<si>",
+                       "<r>",
+                         "<t xml:space=\"preserve\">A string with </t>",
+                       "</r>",
+                       "<r>",
+                         "<rPr>",
+                           "<b/>",
+                           "<sz val=\"12\"/>",
+                           "<color theme=\"1\"/>",
+                           "<rFont val=\"Calibri\"/>",
+                         "</rPr>",
+                         "<t xml:space=\"preserve\">bold and</t>",
+                       "</r>",
+                       "<r>",
+                         "<t xml:space=\"preserve\"> </t>",
+                       "</r>",
+                       "<r>",
+                         "<rPr>",
+                           "<u/>",
+                           "<sz val=\"12\"/>",
+                           "<color rgb =\"FF2A61BB\"/>",
+                           "<rFont val=\"Calibri\"/>",
+                         "</rPr>",
+                         "<t xml:space=\"preserve\">hyperlink</t>",
+                       "</r>",
+                     "</si>")
+  expect_equal(md %>% t2xml %>% md2oxml %>% ppxml, oxml %>% ppxml)
 })
 
 test_that("extract ws name from header line", {
@@ -261,4 +287,39 @@ test_that("parse blockquote", {
   expect_equal(remove_blockquote(">>Some text"), ">Some text")
   expect_equal(remove_blockquote("> >Some text"), ">Some text")
   expect_equal(remove_blockquote(">> Some text"), "> Some text")
+})
+
+test_that("parse lists", {
+  expect_equal(detect_md_list_item("Some text"), FALSE)
+  expect_equal(detect_md_list_item("*item"), FALSE)
+  expect_equal(detect_md_list_item("* item"), TRUE)
+  expect_equal(detect_md_list_item("- item"), TRUE)
+  expect_equal(detect_md_list_item(" - item"), TRUE)
+  expect_equal(detect_md_list_item("-  item"), TRUE)
+  expect_equal(detect_md_list_item("1. item"), TRUE)
+  expect_equal(detect_md_list_item("a. item"), TRUE)
+  expect_equal(detect_md_list_item(" a. item"), TRUE)
+  expect_equal(detect_md_list_item("1 item"), FALSE)
+
+  expect_equal(get_md_list_prefix("Some text"), character(0))
+  expect_equal(get_md_list_prefix("*item"), character(0))
+  expect_equal(get_md_list_prefix("* item"), "• ")
+  expect_equal(get_md_list_prefix("- item"), "• ")
+  expect_equal(get_md_list_prefix(" - item"), "• ")
+  expect_equal(get_md_list_prefix("-  item"), "• ")
+  expect_equal(get_md_list_prefix("1. item"), "1. ")
+  expect_equal(get_md_list_prefix("a. item"), "a. ")
+  expect_equal(get_md_list_prefix(" a. item"), "a. ")
+  expect_equal(get_md_list_prefix("1 item"), character(0))
+
+  expect_equal(remove_md_list_prefix("Some text"), "Some text")
+  expect_equal(remove_md_list_prefix("*item"), "*item")
+  expect_equal(remove_md_list_prefix("* item"), "item")
+  expect_equal(remove_md_list_prefix("- item"), "item")
+  expect_equal(remove_md_list_prefix(" - item"), "item")
+  expect_equal(remove_md_list_prefix("-  item"), "item")
+  expect_equal(remove_md_list_prefix("1. item"), "item")
+  expect_equal(remove_md_list_prefix("a. item"), "item")
+  expect_equal(remove_md_list_prefix(" a. item"), "item")
+  expect_equal(remove_md_list_prefix("1 item"), "1 item")
 })

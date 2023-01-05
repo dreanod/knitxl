@@ -45,4 +45,5 @@ spreadsheet file.
 library(knitxl)
 (f = system.file("examples", "knitxl-minimal.Rmd", package = "knitxl"))
 knitxl(f)  # compile to tex
+
 }
