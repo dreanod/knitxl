@@ -44,11 +44,9 @@ XlObj <- R6::R6Class("XlObj", list(
   insert_text = function(text, type) {
     stopifnot("`text` must be a character" = is.character(text))
 
-    if (type != "text.source") {
-      text <- split_string_by_line(text)
-      if (all(text == "")) {
-        return(invisible(self))
-      }
+    text <- split_string_by_line(text)
+    if (all(text == "")) {
+      return(invisible(self))
     }
 
     n_text_rows <- length(text)

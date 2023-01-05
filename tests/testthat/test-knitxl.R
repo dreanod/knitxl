@@ -15,6 +15,21 @@ test_that("errors, warnings and messages rendered correctly", {
   expect_snapshot_xl("conditions", content)
 })
 
+test_that("parses source code", {
+  dev_old <- opts_chunk$get("dev"); opts_chunk$set(dev = "png")
+  fig.path_old <- opts_chunk$get("fig.path"); opts_chunk$set(fig.path = tempdir())
+
+  expect_snapshot_xl("source_code", build_chunk(c(
+    "with(mtcars, {",
+    "  plot(mpg~hp, pch=20, col='darkgray')",
+    "  lines(lowess(hp, mpg))",
+    "})"
+  )))
+
+  dev_old <- opts_chunk$get("dev"); opts_chunk$set(dev = "png")
+  fig.path_old <- opts_chunk$get("fig.path"); opts_chunk$set(fig.path = tempdir())
+})
+
 test_that("renders data.frames", {
   content <- paste(build_chunk("mtcars"),
                    build_chunk(c("mtcars",
