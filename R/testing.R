@@ -7,10 +7,10 @@ save_xl <- function(input_text) {
 expect_snapshot_xl <- function(name, input_text) {
   name <- paste0(name, ".xlsx")
 
-  announce_snapshot_file(name = name)
+  testthat::announce_snapshot_file(name = name)
 
   path <- save_xl(input_text)
-  expect_snapshot_file(path, name, compare = compare_file_xl)
+  testthat::expect_snapshot_file(path, name, compare = compare_file_xl)
 }
 
 compare_file_xl <- function(old, new) {

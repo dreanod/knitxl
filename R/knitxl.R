@@ -9,6 +9,8 @@
 #'   function will try to guess a default, which will be under the current
 #'   working directory.
 #' @param quiet Boolean; suppress the progress bar and messages?
+#' @param text A character vector. This is an alternative way to provide the
+#' input file.
 #' @param envir Environment in which code chunks are to be evaluated, for
 #'   example, \code{\link{parent.frame}()}, \code{\link{new.env}()}, or
 #'   \code{\link{globalenv}()}).
@@ -26,6 +28,7 @@
 #' knitxl(f)  # compile to tex
 #'
 #' @importFrom magrittr %<>% %>%
+#' @import knitr
 knitxl <- function(input,
                    output = NULL,
                    text = NULL,
@@ -106,7 +109,7 @@ set_xl_hooks_with_options <- function() {
       xl_hook(x, options)
       old_hook(x, options)
     }
-    args <- setNames(list(new_hook), hook_name)
+    args <- stats::setNames(list(new_hook), hook_name)
     do.call(knitr::knit_hooks$set, args)
   }
 
@@ -124,7 +127,7 @@ set_xl_hooks_without_option <- function() {
       xl_hook(x)
       old_hook(x)
     }
-    args <- setNames(list(new_hook), hook_name)
+    args <- stats::setNames(list(new_hook), hook_name)
     do.call(knitr::knit_hooks$set, args)
   }
 

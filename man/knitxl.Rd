@@ -20,6 +20,9 @@ knitxl(
 function will try to guess a default, which will be under the current
 working directory.}
 
+\item{text}{A character vector. This is an alternative way to provide the
+input file.}
+
 \item{quiet}{Boolean; suppress the progress bar and messages?}
 
 \item{envir}{Environment in which code chunks are to be evaluated, for

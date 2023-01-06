@@ -20,7 +20,7 @@ kxl_style <- local({
                     "xl.table.rowNames")
   arg_nms <- c(arg_nms, special_args)
   arg_nms <- sort(arg_nms)
-  args <- setNames(rep(list(NULL), length(arg_nms)), arg_nms)
+  args <- stats::setNames(rep(list(NULL), length(arg_nms)), arg_nms)
 
   rlang::new_function(args, body)
 })
@@ -130,5 +130,5 @@ kxl_style_get_value <- function(style, keys) {
   if (length(values) == 1) {
     return(values[[1]])
   }
-  setNames(values, keys)
+  stats::setNames(values, keys)
 }

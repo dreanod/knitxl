@@ -3,6 +3,17 @@ render_xl <- function(x, options, ...) {
   xl_renderer(x)
 }
 
+#' Represents an R object into a format that can be printed into an XLSX file
+#'
+#' This is a generic function that is intended for developers who want
+#' to extend `knitxl` to print new classes R objects. It transforms an object
+#' into a `knitxl_output_*` class (either `text`, `vector` or `data_frame`)
+#' that can be printed in an XLSX file.
+#'
+#' @param x the object to be rendered in the XLSX file.
+#' @param options the `knitr` and `knitxl` options used to cutomize the
+#' rendering of `x`
+#'
 #' @export
 xl_renderer <- function(x, options) {
   UseMethod("xl_renderer")
@@ -10,7 +21,7 @@ xl_renderer <- function(x, options) {
 
 #' @export
 xl_renderer.default <- function(x, options) {
-  print_output <- paste0(capture.output(
+  print_output <- paste0(utils::capture.output(
     print(x)
   ), collapse = "\n")
   new_knitxl_output_text(print_output)
@@ -54,7 +65,6 @@ xl_renderer.character <- function(x, options) {
     xl_renderer_vector(x)
 }
 
-#' @export
 xl_renderer_vector <- function(x, options) {
   new_knitxl_output_vector(x)
 }

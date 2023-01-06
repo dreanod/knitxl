@@ -184,7 +184,7 @@ get_md_list_prefix <- function(text) {
   } else {
     prefix %>%
       stringr::str_trim() %>%
-      stringr::str_replace("\\*|\\-", "•") %>%
+      stringr::str_replace("\\*|\\-", "\u2022") %>%
       paste0(" ")
   }
 }

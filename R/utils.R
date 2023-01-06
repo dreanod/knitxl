@@ -17,3 +17,10 @@ convert2inch <- function(x, from) {
     "px" = 0.0104166667 * x
   )
 }
+
+get_img_dims <- function(path) {
+  img <- readbitmap::read.bitmap(path)
+  height <- dim(img)[1]
+  width <- dim(img)[2]
+  c(height = height, width = width)
+}

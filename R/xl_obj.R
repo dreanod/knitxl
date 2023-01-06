@@ -1,4 +1,5 @@
-
+#' @import R6
+NULL
 
 XlObj <- R6::R6Class("XlObj", list(
   fn = NA,
@@ -82,7 +83,7 @@ XlObj <- R6::R6Class("XlObj", list(
 
     if (cell_type == "text" & cell_has_hyperlink(text)) {
       link <- get_cell_hyperlink(text)
-      text <- setNames(link, text)
+      text <- stats::setNames(link, text)
       class(text) <- "hyperlink"
     }
 
@@ -115,11 +116,10 @@ XlObj <- R6::R6Class("XlObj", list(
     images <- get_path_to_images(text)
 
     purrr::walk(images, function(path) {
-      img <- readbitmap::read.bitmap(path)
-      height <- dim(img)[1]
-      width <- dim(img)[2]
-      self$insert_image(fn = path, width = width, height = height,
-                      units = "px", dpi = 72)
+      img_dims <- get_img_dims(path)
+      self$insert_image(fn = path, width = img_dims[["width"]],
+                        height = img_dims[["height"]],
+                        units = "px", dpi = 72)
     })
 
     invisible(self)
@@ -329,19 +329,16 @@ XlObj <- R6::R6Class("XlObj", list(
 xl_obj <- XlObj$new()
 
 
-### public interface to write on xl_obj
+### interface to write on xl_obj
 
-#' @export
 insert_text <- function(text, type) {
   xl_obj$insert_text(text, type = type)
 }
 
-#' @export
 insert_vector <- function(x, style) {
   xl_obj$insert_vector(x, style = style)
 }
 
-#' @export
 insert_data_frame <- function(df, style) {
   xl_obj$insert_data_frame(df, style = style)
 }
@@ -356,7 +353,7 @@ insert_image <- function(fn, width, height, units, dpi) {
 get_oxl_style_args <- function(style, type) {
   arg_names <- setdiff(get_base_cell_opts(), "rowHeight")
   style_opt_names <- paste("xl", type, arg_names, sep = ".")
-  args <- setNames(kxl_style_get_value(style, style_opt_names), arg_names)
+  args <- stats::setNames(kxl_style_get_value(style, style_opt_names), arg_names)
   purrr::discard(args, is.null)
 }
 
@@ -364,7 +361,7 @@ initialize_style <- function() {
   style <- kxl_style_get(knitr::opts_chunk$get())
 
   cell_types <- get_cell_types()
-  setNames(purrr::map(cell_types, ~ create_cell_style(style, cell_type = .x)), cell_types)
+  stats::setNames(purrr::map(cell_types, ~ create_cell_style(style, cell_type = .x)), cell_types)
 }
 
 create_cell_style <- function(style, cell_type) {
