@@ -59,6 +59,8 @@ knitxl <- function(input,
                              quiet = quiet,
                              envir = envir,
                              encoding = encoding)
+  on.exit(if (is.null(text)) unlink(knit_output),
+          unlink("figure/", recursive = TRUE), add = TRUE)
 
   if (xl_obj$is_empty()) {
     message("No code to execute: knitxl is just transcribing text to output file.")
