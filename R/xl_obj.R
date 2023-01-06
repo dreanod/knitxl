@@ -369,20 +369,3 @@ create_cell_style <- function(style, cell_type) {
   do.call(openxlsx::createStyle, args)
 }
 
-## Hyperlinks
-
-cell_has_hyperlink <- function(text) {
-  text %>%
-    commonmark::markdown_html() %>%
-    xml2::read_xml() %>%
-    xml2::xml_find_all("//a") %>%
-    length() > 0
-}
-
-get_cell_hyperlink <- function(text) {
-  text %>%
-    commonmark::markdown_html() %>%
-    xml2::read_xml() %>%
-    xml2::xml_find_first("//a") %>%
-    xml2::xml_attr("href")
-}

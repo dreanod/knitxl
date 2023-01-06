@@ -5,7 +5,7 @@ test_that("md to openxml works", {
   }
 
   ppxml <- function(s) {
-    s %>% xml2::read_xml() %>% as.character() %>% stringr::str_remove("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n")
+    s %>% read_xml_lit() %>% as.character() %>% stringr::str_remove("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n")
   }
 
   md <- "A simple string"

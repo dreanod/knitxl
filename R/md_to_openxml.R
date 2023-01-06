@@ -14,7 +14,7 @@ postprocess_shared_string_item <- function(oxml_string_item) {
 }
 
 md2oxml <- function(oxml_string_item) {
-  xml_item <- xml2::read_xml(oxml_string_item)
+  xml_item <- read_xml_lit(oxml_string_item)
 
   stopifnot("Shared string item must be an xml with root element <si> and only one child <t> which contains all the text" =
               xml_item %>% xml2::xml_name() == "si" &
@@ -36,7 +36,7 @@ md2oxml <- function(oxml_string_item) {
     return(oxml_string_item)
 
   new_oxml <- xml2::xml_new_root("si")
-  html_text_nodes <- html_text %>% xml2::read_xml() %>% xml2::xml_find_all("//text()")
+  html_text_nodes <- html_text %>% read_xml_lit() %>% xml2::xml_find_all("//text()")
 
   oxml_text_nodes <- purrr::map(html_text_nodes, html2oxml_for_text_nodes)
   purrr::walk(oxml_text_nodes, function(new_node) {
@@ -50,7 +50,7 @@ md2oxml <- function(oxml_string_item) {
 }
 
 is_simple_string <- function(html_text) {
-  html_text %>% xml2::read_xml() %>% xml2::xml_children() %>% length() == 0
+  html_text %>% read_xml_lit() %>% xml2::xml_children() %>% length() == 0
 }
 
 html2oxml_for_text_nodes <- function(html_text_node) {
@@ -93,7 +93,7 @@ build_simple_oxml_text_node <- function(text) {
   glue::glue(
     "<r><t xml:space=\"preserve\">{text}</t></r>"
   ) %>%
-    xml2::read_xml()
+    read_xml_lit()
 }
 
 build_complex_oxml_text_node <- function(text, italic, bold, strike, underline,
@@ -122,7 +122,7 @@ build_complex_oxml_text_node <- function(text, italic, bold, strike, underline,
       "<t xml:space=\"preserve\">{text}</t>",
     "</r>"
   ) %>%
-    xml2::read_xml()
+    read_xml_lit()
 }
 
 extract_ws_name_option <- function(header_md_text) {
@@ -148,14 +148,14 @@ detect_code_fence <- function(text) {
 
 detect_images <- function(text) {
   commonmark::markdown_html(text) %>%
-    xml2::read_xml() %>%
+    read_xml_lit() %>%
     xml2::xml_find_all("img") %>%
     length() > 0
 }
 
 get_path_to_images <- function(text) {
   commonmark::markdown_html(text) %>%
-    xml2::read_xml() %>%
+    read_xml_lit() %>%
     xml2::xml_find_all("img") %>%
     purrr::map_chr(~ xml2::xml_attr(.x, "src"))
 }
@@ -193,4 +193,20 @@ protect_md_list_prefix <- function(text) {
   prefix <- get_md_list_prefix(text)
   text <- remove_md_list_prefix(text)
   paste0("<span>", prefix, "</span>", text)
+}
+
+cell_has_hyperlink <- function(text) {
+  text %>%
+    commonmark::markdown_html() %>%
+    read_xml_lit() %>%
+    xml2::xml_find_all("//a") %>%
+    length() > 0
+}
+
+get_cell_hyperlink <- function(text) {
+  text %>%
+    commonmark::markdown_html() %>%
+    read_xml_lit() %>%
+    xml2::xml_find_first("//a") %>%
+    xml2::xml_attr("href")
 }
