@@ -2,6 +2,7 @@
 # knitxl
 
 <!-- badges: start -->
+[![R-CMD-check](https://github.com/dreanod/knitxl/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/dreanod/knitxl/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
 The goal of knitxl is to transform an Rmarkdown file into an xlsx file. It is 
