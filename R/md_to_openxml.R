@@ -147,6 +147,7 @@ detect_code_fence <- function(text) {
 }
 
 detect_images <- function(text) {
+  print(text)
   commonmark::markdown_html(text) %>%
     read_xml_lit() %>%
     xml2::xml_find_all("img") %>%
