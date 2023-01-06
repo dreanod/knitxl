@@ -219,3 +219,14 @@ test_that("renders r source code", {
     sep = "\n"
   ))
 })
+
+test_that("knit minimum example works", {
+  dev_old <- opts_chunk$get("dev"); opts_chunk$set(dev = "png")
+  fig.path_old <- opts_chunk$get("fig.path"); opts_chunk$set(fig.path = tempdir())
+
+  content <- readr::read_file(system.file("examples", "knitxl-minimal.Rmd", package = "knitxl"))
+  expect_snapshot_xl("minimum_example", content)
+
+  opts_chunk$set(dev = dev_old)
+  opts_chunk$set(fig.path = fig.path_old)
+})
