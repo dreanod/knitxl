@@ -29,6 +29,6 @@ read_xml_lit <- function(text) {
   if (stringr::str_length(text) > 0) {
     xml2::read_xml(text)
   } else {
-    ""
+    xml2::xml_new_root("p")
   }
 }
