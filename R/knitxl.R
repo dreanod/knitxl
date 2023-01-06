@@ -56,6 +56,8 @@ knitxl <- function(input,
   xl_obj$reset()
   on.exit(xl_obj$reset(), add = TRUE)
 
+  text <- stringr::str_replace_all(text, "\r\n", "\n")
+
   knit_output <- knitr::knit(input = input,
                              output = NULL,
                              text = text,
