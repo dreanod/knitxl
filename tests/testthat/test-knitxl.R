@@ -224,3 +224,16 @@ test_that("knit minimum example works", {
 
   unset_local_context(ctx)
 })
+
+test_that("knit minimum example works from file", {
+  ctx <- set_local_context()
+
+  input_fn <- system.file("examples", "knitxl-minimal.Rmd", package = "knitxl")
+  output_fn <- "minimum_example_from_file.xlsx"
+  testthat::announce_snapshot_file(name = output_fn)
+  path <- tempfile(fileext = ".xlsx")
+  x <- suppressMessages(knitxl(input_fn, output = path, quiet = TRUE))
+  testthat::expect_snapshot_file(path, output_fn, compare = compare_file_xl)
+
+  unset_local_context(ctx)
+})

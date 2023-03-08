@@ -59,7 +59,8 @@ knitxl <- function(input,
   xl_obj$reset()
   on.exit(xl_obj$reset(), add = TRUE)
 
-  text <- stringr::str_replace_all(text, "\r\n", "\n")
+  if (!is.null(text))
+    text <- stringr::str_replace_all(text, "\r\n", "\n")
 
   knit_output <- knitr::knit(input = input,
                              output = NULL,
@@ -67,8 +68,8 @@ knitxl <- function(input,
                              quiet = quiet,
                              envir = envir,
                              encoding = encoding)
-  on.exit(if (is.null(text)) unlink(knit_output),
-          unlink("figure/", recursive = TRUE), add = TRUE)
+  on.exit(if (from_file) unlink(knit_output), add = TRUE)
+  on.exit(unlink("figure/", recursive = TRUE), add = TRUE)
 
   if (xl_obj$is_empty()) {
     message("No code to execute: knitxl is just transcribing text to output file.")
