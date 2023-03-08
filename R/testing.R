@@ -51,7 +51,7 @@ compare_xl_dev <- function() {
 }
 
 set_local_context <- function() {
-  tmp <- paste0(tempdir(), "/")
+  tmp <- file.path(tempdir(), "")
   dev_old <- opts_chunk$get("dev"); opts_chunk$set(dev = "png")
   fig.path_old <- opts_chunk$get("fig.path"); opts_chunk$set(fig.path = tmp)
   list(dev_old = dev_old,
