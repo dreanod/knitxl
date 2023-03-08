@@ -9,6 +9,7 @@ knitxl(
   output = NULL,
   text = NULL,
   quiet = FALSE,
+  return_wb_obj = FALSE,
   envir = parent.frame(),
   encoding = "UTF-8"
 )
@@ -24,6 +25,9 @@ working directory.}
 input file.}
 
 \item{quiet}{Boolean; suppress the progress bar and messages?}
+
+\item{return_wb_obj}{Boolean. If `TRUE`, the function will not save the
+resulting xlsx file, but will return the object representing it.}
 
 \item{envir}{Environment in which code chunks are to be evaluated, for
 example, \code{\link{parent.frame}()}, \code{\link{new.env}()}, or

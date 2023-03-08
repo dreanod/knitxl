@@ -11,6 +11,8 @@
 #' @param quiet Boolean; suppress the progress bar and messages?
 #' @param text A character vector. This is an alternative way to provide the
 #' input file.
+#' @param return_wb_obj Boolean. If `TRUE`, the function will not save the
+#' resulting xlsx file, but will return the object representing it.
 #' @param envir Environment in which code chunks are to be evaluated, for
 #'   example, \code{\link{parent.frame}()}, \code{\link{new.env}()}, or
 #'   \code{\link{globalenv}()}).
@@ -36,17 +38,19 @@ knitxl <- function(input,
                    output = NULL,
                    text = NULL,
                    quiet = FALSE,
+                   return_wb_obj = FALSE,
                    envir = parent.frame(),
                    encoding = "UTF-8") {
 
   stopifnot(!(missing(input) & is.null(text)))
 
-  from_file <- !missing(input)
-  to_file <- !is.null(output) | is.null(text)
-
-  if (from_file)
+  if (!missing(input)) {
     stopifnot(tools::file_ext(input) == "Rmd",
               file.exists(input))
+    text <- readr::read_file(input)
+  }
+
+  text <- stringr::str_replace_all(text, "\r\n", "\n")
 
   old_hooks <- knitr::knit_hooks$get()
   on.exit(knitr::knit_hooks$restore(old_hooks), add = TRUE)
@@ -59,16 +63,13 @@ knitxl <- function(input,
   xl_obj$reset()
   on.exit(xl_obj$reset(), add = TRUE)
 
-  if (!is.null(text))
-    text <- stringr::str_replace_all(text, "\r\n", "\n")
+  knitr::knit(input = NULL,
+              output = NULL,
+              text = text,
+              quiet = quiet,
+              envir = envir,
+              encoding = encoding)
 
-  knit_output <- knitr::knit(input = input,
-                             output = NULL,
-                             text = text,
-                             quiet = quiet,
-                             envir = envir,
-                             encoding = encoding)
-  on.exit(if (from_file) unlink(knit_output), add = TRUE)
   on.exit(unlink("figure/", recursive = TRUE), add = TRUE)
 
   if (xl_obj$is_empty()) {
@@ -78,16 +79,15 @@ knitxl <- function(input,
     insert_text(text, type = "text")
   }
 
-  if (to_file) {
+
+  if (return_wb_obj) {
+    return(invisible(output))
+  } else {
     if (is.null(output))
       output <- out_fn_from_in_fn(input)
     xl_obj$set_fn(output)
     xl_obj$write()
   }
-  else
-    return(xl_obj$get_wb())
-
-  invisible(output)
 }
 
 out_fn_from_in_fn <- function(in_fn) {
