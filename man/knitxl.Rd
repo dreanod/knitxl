@@ -45,8 +45,10 @@ list of patterns, evaluates the code and writes the output in an XLSX
 spreadsheet file.
 }
 \examples{
-library(knitxl)
-(f = system.file("examples", "knitxl-minimal.Rmd", package = "knitxl"))
-knitxl(f)  # compile to tex
+\dontrun{
+  library(knitxl)
+  (f = system.file("examples", "knitxl-minimal.Rmd", package = "knitxl"))
+  knitxl(f)  # compile to tex
+}
 
 }

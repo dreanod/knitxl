@@ -23,9 +23,12 @@
 #'   you provide a character vector input, you get a character vector output.
 #' @export
 #'
-#' @examples library(knitxl)
-#' (f = system.file("examples", "knitxl-minimal.Rmd", package = "knitxl"))
-#' knitxl(f)  # compile to tex
+#' @examples
+#' \dontrun{
+#'   library(knitxl)
+#'   (f = system.file("examples", "knitxl-minimal.Rmd", package = "knitxl"))
+#'   knitxl(f)  # compile to tex
+#' }
 #'
 #' @importFrom magrittr %<>% %>%
 #' @import knitr
