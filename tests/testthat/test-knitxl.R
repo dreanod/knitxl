@@ -16,8 +16,7 @@ test_that("errors, warnings and messages rendered correctly", {
 })
 
 test_that("parses source code", {
-  dev_old <- opts_chunk$get("dev"); opts_chunk$set(dev = "png")
-  fig.path_old <- opts_chunk$get("fig.path"); opts_chunk$set(fig.path = tempdir())
+  ctx <- set_local_context()
 
   expect_snapshot_xl("source_code", build_chunk(c(
     "with(mtcars, {",
@@ -26,8 +25,7 @@ test_that("parses source code", {
     "})"
   )))
 
-  dev_old <- opts_chunk$get("dev"); opts_chunk$set(dev = "png")
-  fig.path_old <- opts_chunk$get("fig.path"); opts_chunk$set(fig.path = tempdir())
+  unset_local_context(ctx)
 })
 
 test_that("renders data.frames", {
@@ -50,8 +48,7 @@ test_that("renders vectors", {
 })
 
 test_that("renders plots", {
-  dev_old <- opts_chunk$get("dev"); opts_chunk$set(dev = "png")
-  fig.path_old <- opts_chunk$get("fig.path"); opts_chunk$set(fig.path = tempdir())
+  ctx <- set_local_context()
 
   content <- build_chunk(
     "plot(1:3, 1:3)",
@@ -60,8 +57,7 @@ test_that("renders plots", {
   )
   expect_snapshot_xl("plot", content)
 
-  opts_chunk$set(dev = dev_old)
-  opts_chunk$set(fig.path = fig.path_old)
+  unset_local_context(ctx)
 })
 
 
@@ -145,7 +141,7 @@ test_that("adding new worksheet works", {
     sep = "\n"
   ))
 })
-
+#
 test_that("horizontal rules work", {
   expect_snapshot_xl("hrules", paste(
     "# Testing Hrules",
@@ -221,12 +217,10 @@ test_that("renders r source code", {
 })
 
 test_that("knit minimum example works", {
-  dev_old <- opts_chunk$get("dev"); opts_chunk$set(dev = "png")
-  fig.path_old <- opts_chunk$get("fig.path"); opts_chunk$set(fig.path = tempdir())
+  ctx <- set_local_context()
 
   content <- readr::read_file(system.file("examples", "knitxl-minimal.Rmd", package = "knitxl"))
   expect_snapshot_xl("minimum_example", content)
 
-  opts_chunk$set(dev = dev_old)
-  opts_chunk$set(fig.path = fig.path_old)
+  unset_local_context(ctx)
 })

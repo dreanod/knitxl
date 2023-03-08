@@ -49,3 +49,19 @@ build_chunk <- function(...) {
 compare_xl_dev <- function() {
   compare_file_xl("dev/Book1.xlsx", "dev/Book2.xlsx")
 }
+
+set_local_context <- function() {
+  tmp <- paste0(tempdir(), "/")
+  dev_old <- opts_chunk$get("dev"); opts_chunk$set(dev = "png")
+  fig.path_old <- opts_chunk$get("fig.path"); opts_chunk$set(fig.path = tmp)
+  list(dev_old = dev_old,
+       fig.path_old = fig.path_old,
+       tempdir = tmp)
+}
+
+unset_local_context <- function(params) {
+  unlink(params$tempdir, recursive = TRUE)
+  opts_chunk$set(dev = params$dev_old)
+  opts_chunk$set(fig.path = params$fig.path_old)
+}
+
