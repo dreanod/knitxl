@@ -50,7 +50,12 @@ knitxl <- function(input,
     text <- readr::read_file(input)
   }
 
-  text <- stringr::str_replace_all(text, "\r\n", "\n")
+  text <- stringr::str_replace_all(text, "\r\n", "\n") %>%
+    stringr::str_split_1("\n")
+
+  front_matter <- parse_yaml_front_matter(text)
+  text <- partition_yaml_front_matter(text)$body %>% paste(collapse = "\n")
+
 
   old_hooks <- knitr::knit_hooks$get()
   on.exit(knitr::knit_hooks$restore(old_hooks), add = TRUE)
