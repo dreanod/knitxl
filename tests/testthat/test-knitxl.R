@@ -251,3 +251,35 @@ test_that("knit minimum example works from file with header", {
 
   unset_local_context(ctx)
 })
+
+
+test_that("printing output works", {
+  ctx <- set_local_context()
+
+  expect_snapshot_xl("output", paste(
+    "# Printing outputs: \n",
+    "\n",
+    build_chunk(c(
+      "x <- 1 + 1",
+      "print(x)",
+      "fit <- lm(mpg ~ cyl, data = mtcars)",
+      "summary(fit)"
+    ))
+  ))
+
+  unset_local_context(ctx)
+})
+
+# test_that("xl_renderer methods can be implemented", {
+#
+#    # xl_renderer.lm <- function(x, options) {
+#    #   print(summary(x))
+#    # }
+#
+#    expect_snapshot_xl("xl_renderer", paste(
+#      "Results of a linear fit:",
+#      "",
+#      build_chunk("lm(mpg ~ cyl, data = mtcars)"),
+#      sep = "\n"
+#    ))
+# })

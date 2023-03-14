@@ -14,22 +14,33 @@ render_xl <- function(x, options, ...) {
 #' @param options the `knitr` and `knitxl` options used to cutomize the
 #' rendering of `x`
 #'
+#' @return A character singleton, vector, or a data frame with class
+#' `knitxl_output_*` (either `text`, `vector` or `data_frame`, respectively).
+#'
+#' @examples
+#'    # Writes the summary of linear model fits
+#'    xl_renderer.lm <- function(x, options) {
+#'      res <- capture.output(summary(x))
+#'      res <- paste0(res, collapse = "\n")
+#'      class(res) <- "knit_xl_output_vector"
+#'      res
+#'    }
+#'    # knitxl will now render print the summary of `lm` object in the generate
+#'    # .xlsx file.
 #' @export
+#'
 xl_renderer <- function(x, options) {
   UseMethod("xl_renderer")
 }
 
 #' @export
 xl_renderer.default <- function(x, options) {
-  print_output <- paste0(utils::capture.output(
-    print(x)
-  ), collapse = "\n")
-  new_knitxl_output_text(print_output)
+  knitr::knit_print(x)
 }
 
 new_knitxl_output_text <- function(text) {
-  class(x) <- c("knitxl_output_text", class(x))
-  x
+  class(text) <- c("knitxl_output_text", class(text))
+  text
 }
 
 #' @export

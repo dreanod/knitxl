@@ -60,31 +60,37 @@ XlObj <- R6::R6Class("XlObj", list(
   },
 
   write_line = function(text, type) {
-    if (detect_code_fence(text)) {
+
+    if (type == "text.output") {
+      self$write_line_in_cell(text, cell_type = type, parse_md = FALSE)
+    } else if (detect_code_fence(text)) {
       self$is_in_code_block <- !self$is_in_code_block
       self$newline()
     } else if (type == "text") {
       if (self$is_in_code_block) {
-        self$write_line_in_cell(text, cell_type = "text.source")
+        self$write_line_in_cell(text, cell_type = "text.source", parse_md = FALSE)
       } else if (stringr::str_length(text) > 0) {
         self$parse_and_write_md_line(text)
       } else {
         self$newline()
       }
     } else {
-      self$write_line_in_cell(text, cell_type = type)
+      self$write_line_in_cell(text, cell_type = type, parse_md = FALSE)
     }
 
     invisible(self)
   },
 
-  write_line_in_cell = function(text, cell_type) {
-    text <- paste0(get_md_string_flag(), text)
+  write_line_in_cell = function(text, cell_type, parse_md = TRUE) {
 
-    if (cell_type == "text" & cell_has_hyperlink(text)) {
-      link <- get_cell_hyperlink(text)
-      text <- stats::setNames(link, text)
-      class(text) <- "hyperlink"
+    if (parse_md) {
+      text <- paste0(get_md_string_flag(), text)
+
+      if (cell_type == "text" & cell_has_hyperlink(text)) {
+        link <- get_cell_hyperlink(text)
+        text <- stats::setNames(link, text)
+        class(text) <- "hyperlink"
+      }
     }
 
     openxlsx::writeData(self$wb, self$current_ws, text, startRow = self$current_row)

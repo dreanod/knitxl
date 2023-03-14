@@ -78,10 +78,16 @@ kxl_style_default <- function() {
 
             xl.text.error.fontColour = "red",
             xl.text.error.textDecoration = "bold",
+
             xl.text.warning.fontColour = "orange",
             xl.text.warning.textDecoration = "bold",
+
             xl.text.message.fontColour = "blue",
             xl.text.message.textDecoration = "italic",
+
+            xl.text.output.fontColour = "grey",
+            xl.text.output.fontName = "Courier New",
+            xl.text.output.textDecoration = "italic",
 
             xl.text.source.fontName = "Courier New",
 

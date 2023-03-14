@@ -31,6 +31,7 @@ get_cell_types <- function() {
     "text.warning",
     "text.message",
     "text.source",
+    "text.output",
     "vector",
     "vector.names",
     "table",

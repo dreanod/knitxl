@@ -4,6 +4,7 @@ source_hook <- function(x, options) {
 }
 
 output_hook <- function(x, options) {
+  insert_text(x, type = "text.output")
   invisible(x)
 }
 
