@@ -256,7 +256,7 @@ test_that("knit minimum example works from file with header", {
 test_that("printing output works", {
   ctx <- set_local_context()
 
-  expect_snapshot_xl("output", paste(
+  expect_snapshot_xl("output", paste0(
     "# Printing outputs: \n",
     "\n",
     build_chunk(c(
