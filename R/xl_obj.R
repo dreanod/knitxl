@@ -339,19 +339,23 @@ xl_obj <- XlObj$new()
 
 insert_text <- function(text, type) {
   xl_obj$insert_text(text, type = type)
+  return(NULL)
 }
 
 insert_vector <- function(x, style) {
   xl_obj$insert_vector(x, style = style)
+  return(NULL)
 }
 
 insert_data_frame <- function(df, style) {
   xl_obj$insert_data_frame(df, style = style)
+  return(NULL)
 }
 
 insert_image <- function(fn, width, height, units, dpi) {
   xl_obj$insert_image(fn, width = width, height = height,
                       units = units, dpi = dpi)
+  return(NULL)
 }
 
 ### Styles

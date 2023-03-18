@@ -2,24 +2,42 @@
 % Please edit documentation in R/render_xl.R
 \name{xl_renderer}
 \alias{xl_renderer}
+\alias{xl_renderer.default}
+\alias{xl_renderer.data.frame}
+\alias{xl_renderer.numeric}
+\alias{xl_renderer.logical}
+\alias{xl_renderer.list}
+\alias{xl_renderer.character}
 \title{Represents an R object into a format that can be printed into an XLSX file}
 \usage{
 xl_renderer(x, options)
+
+\method{xl_renderer}{default}(x, options)
+
+\method{xl_renderer}{data.frame}(x, options)
+
+\method{xl_renderer}{numeric}(x, options)
+
+\method{xl_renderer}{logical}(x, options)
+
+\method{xl_renderer}{list}(x, options)
+
+\method{xl_renderer}{character}(x, options)
 }
 \arguments{
 \item{x}{the object to be rendered in the XLSX file.}
 
-\item{options}{the `knitr` and `knitxl` options used to cutomize the
-rendering of `x`}
+\item{options}{the \code{knitr} and \code{knitxl} options used to cutomize the
+rendering of \code{x}}
 }
 \value{
-A character singleton, vector, or a data frame with class
-`knitxl_output_*` (either `text`, `vector` or `data_frame`, respectively).
+A character singleton, a data vector, or a data frame with class
+\verb{knitxl_output_*} (either \code{text}, \code{vector} or \code{data_frame}, respectively).
 }
 \description{
 This is a generic function that is intended for developers who want
-to extend `knitxl` to print new classes R objects. It transforms an object
-into a `knitxl_output_*` class (either `text`, `vector` or `data_frame`)
+to extend \code{knitxl} to print new classes R objects. It transforms an object
+into a \verb{knitxl_output_*} class (either \code{text}, \code{vector} or \code{data_frame})
 that can be printed in an XLSX file.
 }
 \examples{

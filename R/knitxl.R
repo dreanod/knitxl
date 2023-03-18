@@ -17,18 +17,15 @@
 #' @param encoding Encoding of the input file; always assumed to be UTF-8 (i.e.,
 #'   this argument is effectively ignored).
 #' @return The compiled document is written into the output file, and the path
-#'   of the output file is returned. If the \code{text} argument is not
-#'   \code{NULL}, the compiled output is returned as a character vector. In
-#'   other words, if you provide a file input, you get an output filename; if
-#'   you provide a character vector input, you get a character vector output.
+#'   of the output file is returned invisibly.
 #' @export
 #'
 #' @examples
-#' \dontrun{
 #'   library(knitxl)
-#'   (f = system.file("examples", "knitxl-minimal.Rmd", package = "knitxl"))
-#'   knitxl(f)  # compile to tex
-#' }
+#'   path_to_input <- system.file("examples", "knitxl-minimal.Rmd", package = "knitxl")
+#'   path_to_output <- "knitxl-minimal.xlsx"
+#'   knitxl(path_to_input, output = path_to_output)  # will generate knitxl-minimal.xlsx
+#'   unlink(path_to_output)
 #'
 #' @importFrom magrittr %<>% %>%
 #' @import knitr
@@ -90,7 +87,7 @@ knitxl <- function(input,
   xl_obj$set_fn(output)
   xl_obj$write()
 
-  invisible(out)
+  invisible(output)
 }
 
 out_fn_from_in_fn <- function(in_fn) {

@@ -14,7 +14,7 @@ render_xl <- function(x, options, ...) {
 #' @param options the `knitr` and `knitxl` options used to cutomize the
 #' rendering of `x`
 #'
-#' @return A character singleton, vector, or a data frame with class
+#' @return A character singleton, a data vector, or a data frame with class
 #' `knitxl_output_*` (either `text`, `vector` or `data_frame`, respectively).
 #'
 #' @examples
@@ -44,6 +44,7 @@ xl_renderer <- function(x, options) {
 }
 
 #' @export
+#' @rdname xl_renderer
 xl_renderer.default <- function(x, options) {
   knitr::knit_print(x)
 }
@@ -54,6 +55,7 @@ new_knitxl_output_text <- function(text) {
 }
 
 #' @export
+#' @rdname xl_renderer
 xl_renderer.data.frame <- function(x, options) {
   new_knitxl_output_data_frame(x)
 }
@@ -64,21 +66,25 @@ new_knitxl_output_data_frame <- function(df) {
 }
 
 #' @export
+#' @rdname xl_renderer
 xl_renderer.numeric <- function(x, options) {
   xl_renderer_vector(x)
 }
 
 #' @export
+#' @rdname xl_renderer
 xl_renderer.logical <- function(x, options) {
   xl_renderer_vector(x)
 }
 
 #' @export
+#' @rdname xl_renderer
 xl_renderer.list <- function(x, options) {
   xl_renderer_vector(x)
 }
 
 #' @export
+#' @rdname xl_renderer
 xl_renderer.character <- function(x, options) {
   if (length(x) == 1)
     new_knitxl_output_text(x)
