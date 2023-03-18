@@ -10,6 +10,7 @@
 #' @param ... Other arguments to pass to methods.
 #'
 #' @return Invisibly returns `NULL`.
+#' @keywords internal
 #' @export
 sew.knitxl_output_text <- function(x, options, ...) {
   insert_text(unclass(x))

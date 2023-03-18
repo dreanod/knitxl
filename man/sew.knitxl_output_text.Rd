@@ -27,3 +27,4 @@ Invisibly returns \code{NULL}.
 These functions are called within \code{\link[knitr:knit]{knitr::knit()}} to write either text
 vector or a table into the output .xlsx file produced by \code{\link[=knitxl]{knitxl()}}.
 }
+\keyword{internal}
