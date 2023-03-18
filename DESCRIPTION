@@ -1,7 +1,7 @@
 Package: knitxl
 Type: Package
-Title: Generates a Spreadsheet Report From an 'rmarkdown' File
-Version: 0.0.0.9000
+Title: Generates a Spreadsheet Report from an 'rmarkdown' File
+Version: 0.1.0
 Authors@R: c(
       person("Denis", "Dreano", email = "denis.dreano@protonmail.ch",
              role = c("cre", "aut", "cph"))
