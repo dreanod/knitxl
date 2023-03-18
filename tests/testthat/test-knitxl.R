@@ -270,16 +270,44 @@ test_that("printing output works", {
   unset_local_context(ctx)
 })
 
-# test_that("xl_renderer methods can be implemented", {
-#
-#    # xl_renderer.lm <- function(x, options) {
-#    #   print(summary(x))
-#    # }
-#
-#    expect_snapshot_xl("xl_renderer", paste(
-#      "Results of a linear fit:",
-#      "",
-#      build_chunk("lm(mpg ~ cyl, data = mtcars)"),
-#      sep = "\n"
-#    ))
-# })
+test_that("xl_renderer methods can be implemented with print output", {
+
+   xl_renderer.lm <- function(x, options) {
+     res <- summary(x)
+     glue::glue(
+       "Goodness of fit: R^2 = {res$r.squared}", "\n",
+       "Estimated coefficients are:", "\n",
+       res$coefficients %>%
+         as.data.frame %>%
+         glue::glue_data("* {Estimate} for variable {rownames(.)}") %>%
+         paste(collapse = "\n")
+     )
+   }
+
+   registerS3method("xl_renderer", "lm", xl_renderer.lm)
+
+   expect_snapshot_xl("xl_renderer_print_output", paste(
+     "Results of a linear fit:",
+     "",
+     build_chunk("lm(mpg ~ cyl, data = mtcars)"),
+     sep = "\n"
+   ))
+})
+
+test_that("xl_renderer methods can be implemented with data.frame output", {
+
+   xl_renderer.lm <- function(x, options) {
+     summary(x)$coefficients %>%
+       as.data.frame() %>%
+       new_knitxl_output_data_frame()
+   }
+
+   registerS3method("xl_renderer", "lm", xl_renderer.lm)
+
+   expect_snapshot_xl("xl_renderer_data_frame", paste(
+     "Coefficients of a linear fit:",
+     "",
+     build_chunk("lm(mpg ~ cyl, data = mtcars)"),
+     sep = "\n"
+   ))
+})

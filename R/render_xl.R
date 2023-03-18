@@ -18,17 +18,27 @@ render_xl <- function(x, options, ...) {
 #' `knitxl_output_*` (either `text`, `vector` or `data_frame`, respectively).
 #'
 #' @examples
-#'    # Writes the summary of linear model fits
+#'    # Writes the summary of linear model fits a print output:
 #'    xl_renderer.lm <- function(x, options) {
 #'      res <- capture.output(summary(x))
 #'      res <- paste0(res, collapse = "\n")
 #'      class(res) <- "knit_xl_output_vector"
 #'      res
 #'    }
-#'    # knitxl will now render print the summary of `lm` object in the generate
+#'    registerS3method("xl_renderer", "lm", xl_renderer.lm)
+#'    # knitxl will now print the summary of `lm` object in the generated
 #'    # .xlsx file.
-#' @export
 #'
+#'    # This will instead write the summary information about the coefficients
+#'    # in a table:
+#'    xl_renderer.lm <- function(x, options) {
+#'      summary(x)$coefficients %>%
+#'      as.data.frame() %>%
+#'      new_knitxl_output_data_frame()
+#'    }
+#'   registerS3method("xl_renderer", "lm", xl_renderer.lm)
+#'
+#' @export
 xl_renderer <- function(x, options) {
   UseMethod("xl_renderer")
 }
