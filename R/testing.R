@@ -13,18 +13,35 @@ expect_snapshot_xl <- function(name, input_text) {
   testthat::expect_snapshot_file(path, name, compare = compare_file_xl)
 }
 
-compare_file_xl <- function(old, new) {
-  old <- openxlsx::loadWorkbook(old)
-  new <- openxlsx::loadWorkbook(new)
+expect_wb_objects_equal <- function(old, new, old_path = NULL, new_path = NULL) {
+  comp <- waldo::compare(old, new)
+  test_result <- length(comp) == 0
+
+  if (test_result == TRUE) {
+    error_message <- "Workbook objects are identical:\n"
+  }
+  else {
+    error_message <- "Workbook objects are different:\n"
+    if (!is.null(old_path) && !is.null(new_path)) {
+      paths_message <- sprintf("Old path: %s\nNew path: %s\n", old_path, new_path)
+      error_message <- paste(error_message, paths_message, sep = "")
+    }
+    error_message <- paste(error_message, comp, sep = "\n")
+  }
+
+  testthat::expect(test_result, error_message)
+
+  test_result
+}
+
+compare_file_xl <- function(old_path, new_path) {
+  old <- openxlsx::loadWorkbook(old_path)
+  new <- openxlsx::loadWorkbook(new_path)
 
   old <- trim_wb_object(old)
   new <- trim_wb_object(new)
 
-  comp <- waldo::compare(old, new)
-
-  if (length(comp) > 0)
-    print(comp)
-  length(comp) == 0
+  expect_wb_objects_equal(old, new, old_path, new_path)
 }
 
 trim_wb_object <- function(wb) {

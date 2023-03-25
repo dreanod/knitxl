@@ -311,3 +311,4 @@ test_that("xl_renderer methods can be implemented with data.frame output", {
      sep = "\n"
    ))
 })
+
