@@ -7,7 +7,7 @@ Authors@R: c(
              role = c("cre", "aut", "cph"))
     )
 Description: Convert an R Markdown documents into an '.xlsx' spreadsheet reports
-    with the 'knitxl()' function, which works similarly to `knit()` from the 
+    with the knitxl() function, which works similarly to knit() from the 
     'knitr' package. The generated report can be opened in 'Excel' or similar
     software for further analysis and presentation.
 License: GPL (>= 3)
