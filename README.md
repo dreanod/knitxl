@@ -15,7 +15,7 @@ This will convert an `.Rmd` file into an `.xlsx` file:
 
 ```r
 library(knitxl)
-path_to_rmd_file <- system.file("examples/minimal-example.Rmd", package = "knitxl")
+path_to_rmd_file <- system.file("examples/knitxl-minimal.Rmd", package = "knitxl")
 knitxl(path_to_rmd_file)
 ```
 
